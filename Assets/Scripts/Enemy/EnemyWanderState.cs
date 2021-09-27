@@ -13,18 +13,28 @@ public class EnemyWanderState : EnemyBaseState
     private bool patrolForward;
     private bool walking;
     private bool waiting;
+    private bool isDistracted;
     private float startTime;
     private int currentPatrolIndex;
+    private Vector3 distractPos;
 
     public override void EnterState(EnemyStateManager enemy)
     {
         this.enemy = enemy;
+        
+        EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
         SetNewDestination();
         enemy.anim.SetInteger("moving", 1);
     }
 
     public override void UpdateState()
     {
+        if (isDistracted && Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < 80)
+        {
+            enemy.agent.SetDestination(distractPos);
+            isDistracted = false;
+        }
+        
         if (enemy.agent.remainingDistance < 0.01f)
         {
             if (walking)
@@ -100,4 +110,12 @@ public class EnemyWanderState : EnemyBaseState
         newAngle.z = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.z, enemy.patrolPoints[currentPatrolIndex].eulerAngles.z, (Time.time - startTime) / rotationSpeed);
         enemy.enemyGameobject.transform.eulerAngles = newAngle;
     }
+
+    private void Distraction(Vector3 _distractPos)
+    {
+        distractPos = _distractPos;
+        isDistracted = true;
+    }
 }
+
+
