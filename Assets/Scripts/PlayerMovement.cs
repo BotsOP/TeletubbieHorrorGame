@@ -12,22 +12,32 @@ public class PlayerMovement
 
     public PlayerMovement(GameObject _playerBodyPrefab, float _speed)
     {
+        EventSystem.Subscribe(EventType.UPDATE, Update);
+        EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
+
         playerBodyPrefab = _playerBodyPrefab;
         speed = _speed;
         rb = playerBodyPrefab.GetComponent<Rigidbody>();
     }
     
-    public void Update()
+    private void Update()
     {
-        movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        float origMagnitude = movement.magnitude;
+        movement.y = 0.0f;
+        movement = movement.normalized * origMagnitude;
+
+        movement = playerBodyPrefab.transform.right * horizontal + playerBodyPrefab.transform.forward * vertical;
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
         MoveCharacter(movement);
     }
 
-    public void MoveCharacter(Vector3 _direction)
+    private void MoveCharacter(Vector3 _direction)
     {
         rb.velocity = _direction * speed;
     }

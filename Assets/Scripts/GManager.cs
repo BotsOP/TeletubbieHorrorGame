@@ -4,10 +4,27 @@ using UnityEngine;
 
 public class GManager : MonoBehaviour
 {
-    public System.Action UPDATE;
+    [SerializeField] private GameObject playerBodyPrefab;
+    [SerializeField] private PlayerLook playerLook;
+    [SerializeField] private PlayerLook playerMovement;
+    [SerializeField] private PlayerLook playerController;
+    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerSpeed;
+
+    private void Start()
+    {
+        PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
+        PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, playerSpeed);
+
+        EventSystem.RaiseEvent(EventType.START);
+    }
 
     private void Update()
     {
-        UPDATE?.Invoke();
+        EventSystem.RaiseEvent(EventType.UPDATE);
+    }
+
+    private void FixedUpdate()
+    {
+        EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
     }
 }

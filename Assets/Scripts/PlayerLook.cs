@@ -6,28 +6,33 @@ public class PlayerLook
 {
     private GameObject playerBodyPrefab;
 
-    private GameObject cam;
+    private Camera cam;
 
     private float mouseSensitivityX, mouseSensitivityY;
     private float maxAngleY, minAngleY;
     private float angleX, angleY;
 
-    public PlayerLook(GameObject _playerBodyPrefab, GameObject _cam, float _sensitivity, float _minAngleY, float _maxAngleY)
+    public PlayerLook(GameObject _playerBodyPrefab, Camera _cam, float _sensitivity, float _minAngleY, float _maxAngleY)
     {
+        Cursor.lockState = CursorLockMode.Locked;
+
+        EventSystem.Subscribe(EventType.UPDATE, Update);
+
         playerBodyPrefab = _playerBodyPrefab;
         cam = _cam;
         mouseSensitivityX = _sensitivity;
         mouseSensitivityY = _sensitivity;
         minAngleY = _minAngleY;
         maxAngleY = _maxAngleY;
+        angleY = 0;
     }
 
-    void Update()
+    private void Update()
     {
         Look();
     }
 
-    public void Look()
+    private void Look()
     {
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");

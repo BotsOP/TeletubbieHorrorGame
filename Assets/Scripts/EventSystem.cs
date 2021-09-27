@@ -6,7 +6,7 @@ public enum EventType
 {
     START,
     UPDATE,
-    START_GHOST,
+    FIXED_UPDATE,
     END_GHOST
 }
 
