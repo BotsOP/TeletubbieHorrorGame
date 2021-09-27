@@ -9,7 +9,7 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
-        EnemyStateManager enemy = new EnemyStateManager(enemyBody);
+        EnemyStateManager enemy = new EnemyStateManager(enemyBody, patrolPoints);
         EventSystem.RaiseEvent(EventType.START);
     }
 

@@ -8,27 +8,27 @@ public class EnemyStateManager
     public EnemyChaseState chaseState = new EnemyChaseState();
     public EnemyWanderState wanderState = new EnemyWanderState();
     public EnemyScareState attackState = new EnemyScareState();
+    public GameObject enemyGameobject;
+    public Transform[] patrolPoints;
 
     [HideInInspector] public NavMeshAgent agent;
     [HideInInspector] public Animator anim;
     [HideInInspector] public Transform chaseTarget;
 
-    public GameObject enemyBodyBlueprint;
-
-    private GameObject enemyGameobject;
-
     private EnemyBaseState currentState;
 
-    public EnemyStateManager(GameObject prefab)
+
+    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints)
     {
-        enemyGameobject = GameObject.Instantiate(prefab);
+        enemyGameobject = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        patrolPoints = _patrolPoints;
+
         EventSystem.Subscribe(EventType.START, Start);
         EventSystem.Subscribe(EventType.UPDATE, Update);
     }
 
-    public void Start()
+    private void Start()
     {
-        Debug.Log("Start");
         agent = enemyGameobject.GetComponent<NavMeshAgent>();
         anim = enemyGameobject.GetComponent<Animator>();
 
@@ -39,9 +39,8 @@ public class EnemyStateManager
         currentState.EnterState(this);
     }
 
-    public void Update()
+    private void Update()
     {
-        Debug.Log("Update");
         currentState.UpdateState();
     }
 
