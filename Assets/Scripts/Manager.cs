@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,14 +8,19 @@ public class Manager : MonoBehaviour
     public Transform[] patrolPoints;
     public GameObject enemyBody;
 
-    void Start()
+    private void Start()
     {
         EnemyStateManager enemy = new EnemyStateManager(enemyBody, patrolPoints);
         EventSystem.RaiseEvent(EventType.START);
     }
 
-    void Update()
+    private void Update()
     {
         EventSystem.RaiseEvent(EventType.UPDATE);
+    }
+
+    private void FixedUpdate()
+    {
+        EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
     }
 }
