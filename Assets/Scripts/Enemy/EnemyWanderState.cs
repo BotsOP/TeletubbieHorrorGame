@@ -23,12 +23,21 @@ public class EnemyWanderState : EnemyBaseState
         this.enemy = enemy;
         
         EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
+        
         SetNewDestination();
+
+        enemy.agent.speed = 2;
+        enemy.anim.SetInteger("battle", 0);
         enemy.anim.SetInteger("moving", 1);
     }
 
     public override void UpdateState()
     {
+        if (enemy.fov.canSeeTarget)
+        {
+            enemy.SwitchState(enemy.chaseState);
+        }
+        
         if (isDistracted && Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < 80)
         {
             enemy.agent.SetDestination(distractPos);
@@ -56,10 +65,6 @@ public class EnemyWanderState : EnemyBaseState
             }
 
             SmoothRotation();
-        }
-        else
-        {
-
         }
 
         if (waiting && Time.time - startTime > PATROL_WAITING_TIME)
