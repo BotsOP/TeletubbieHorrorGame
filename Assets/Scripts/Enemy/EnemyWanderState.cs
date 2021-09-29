@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemyWanderState : EnemyBaseState
@@ -23,6 +24,8 @@ public class EnemyWanderState : EnemyBaseState
         this.enemy = enemy;
         
         EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
+        
+        currentPatrolIndex = GetNearestPatrolPoint();
         
         SetNewDestination();
 
@@ -106,9 +109,44 @@ public class EnemyWanderState : EnemyBaseState
         }
     }
 
+    private int GetNearestPatrolPoint()
+    {
+        float[] smallestDistance = new float[enemy.patrolPoints.Length];
+        int closestPatrolPoint = 0;
+        for (int i = 0; i < enemy.patrolPoints.Length; i++)
+        {
+            smallestDistance[i] = Vector3.Distance(enemy.patrolPoints[i].position, enemy.enemyGameobject.transform.position);
+        }
+        for (int i = 0; i < enemy.patrolPoints.Length; i++)
+        {
+            if (Vector3.Distance(enemy.patrolPoints[i].position, enemy.enemyGameobject.transform.position) <= smallestDistance.Min())
+            {
+                closestPatrolPoint = i;
+            }
+        }
+        return closestPatrolPoint;
+    }
+
+    private void CheckForDoor()
+    {
+        RaycastHit hit;
+        float raycastDistance = 1f;
+        
+        if (Physics.Raycast(enemy.enemyGameobject.transform.position, enemy.enemyGameobject.transform.forward, out hit, raycastDistance, layerMask, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.transform.GetComponent<Animator>())
+            {
+                if (AnimatorHasParameter("TriggerDoor", hit.transform.GetComponent<Animator>()) && !CheckForLock(hit.transform.gameObject))
+                {
+                    hit.transform.GetComponent<Animator>().SetTrigger("TriggerDoor");
+                }
+            }
+        }
+    }
+
     private void SmoothRotation()
     {
-        float rotationSpeed = 80;
+        float rotationSpeed = 30;
         Vector3 newAngle;
         newAngle.x = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.x, enemy.patrolPoints[currentPatrolIndex].eulerAngles.x, (Time.time - startTime) / rotationSpeed);
         newAngle.y = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.y, enemy.patrolPoints[currentPatrolIndex].eulerAngles.y, (Time.time - startTime) / rotationSpeed);

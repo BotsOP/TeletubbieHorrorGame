@@ -19,9 +19,9 @@ public class EnemyStateManager
     private EnemyBaseState currentState;
 
 
-    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints)
+    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos)
     {
-        enemyGameobject = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        enemyGameobject = GameObject.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
         patrolPoints = _patrolPoints;
 
         EventSystem.Subscribe(EventType.START, Start);
