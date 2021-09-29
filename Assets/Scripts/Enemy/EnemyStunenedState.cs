@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyStunenedState : EnemyBaseState
 {
-    private const float STUNNED_TIME = 1.5f;
+    private const float STUNNED_TIME = 5f;
     
     EnemyStateManager enemy;
     private float startTime;
