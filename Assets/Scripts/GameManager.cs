@@ -6,29 +6,32 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("Player References")]
+    private PlayerController playerController;
+    private PlayerLook playerLook;
+    private PlayerMovement playerMovement;
+    private PlayerHeadBob playerHeadBob;
+
     [SerializeField] private GameObject playerBodyPrefab;
-    [SerializeField] private PlayerLook playerLook;
-    [SerializeField] private PlayerLook playerMovement;
-    [SerializeField] private PlayerHeadBob playerHeadBob;
-    [SerializeField] private PlayerController playerController;
     [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerSpeed, groundDistance = 0.4f;
     [SerializeField] private float bobbingSpeed = 16f, bobbingAmount = 0.05f;
+    [Space(15)]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask playerRaycastLayer;
     [SerializeField] private LayerMask playerPickUpLayer;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private float maxPlayerRayDistance;
-
+    [Space(15)]
     [SerializeField] private GameObject objectHolder;
+    [SerializeField] private float throwForce = 5f;
+    [SerializeField] private TextMeshProUGUI textForInteraction;
     [SerializeField] private GameObject[] objectToOpen;
     [SerializeField] private GameObject[] keyToUse;
-    [SerializeField] private TextMeshProUGUI textForInteraction;
+    [Space(15)]
     [SerializeField] private GameObject flashLight;
     [SerializeField] private float flashLightCoolDown;
     [SerializeField] private float flashLightMaxUsage;
     [SerializeField] private float flashLightDistance = 3f;
-    [SerializeField] private float throwForce = 5f;
 
     Dictionary<GameObject, GameObject> objectsToOpenDict = new Dictionary<GameObject, GameObject>();
 
@@ -39,10 +42,10 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        PlayerController playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
-        PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
-        PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
-        PlayerHeadBob playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovementScript, bobbingSpeed, bobbingAmount);
+        playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
+        playerLook = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
+        playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
+        playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
     }
 
     void Update()
@@ -54,4 +57,5 @@ public class GameManager : MonoBehaviour
     {
         EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
     }
+   
 }

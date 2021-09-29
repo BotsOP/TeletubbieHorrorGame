@@ -11,6 +11,7 @@ public class PlayerLook
     private float mouseSensitivityX, mouseSensitivityY;
     private float maxAngleY, minAngleY;
     private float angleX, angleY;
+    private bool canLook = true;
 
     public PlayerLook(GameObject _playerBodyPrefab, Camera _cam, float _sensitivity, float _minAngleY, float _maxAngleY)
     {
@@ -25,11 +26,16 @@ public class PlayerLook
         minAngleY = _minAngleY;
         maxAngleY = _maxAngleY;
         angleY = 0;
+
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     private void Update()
     {
-        Look();
+        if (canLook)
+        {
+            Look();
+        }
     }
 
     private void Look()
@@ -43,5 +49,11 @@ public class PlayerLook
 
         playerBodyPrefab.transform.rotation = Quaternion.Euler(0, angleX, 0);
         cam.transform.localRotation = Quaternion.Euler(-angleY, 0, 0);
+    }
+
+    private void PlayerAttacked(Transform _enemyTransform)
+    {
+        canLook = false;
+        playerBodyPrefab.transform.LookAt(_enemyTransform);
     }
 }

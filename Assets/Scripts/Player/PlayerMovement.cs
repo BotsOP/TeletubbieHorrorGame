@@ -15,6 +15,7 @@ public class PlayerMovement
 
     private LayerMask groundLayer;
     private float groundDistance = 0.4f;
+    private bool canMove = true;
 
     public float horizontal { get; private set; }
     public float vertical { get; private set; }
@@ -31,6 +32,8 @@ public class PlayerMovement
         playerBodyPrefab = _playerBodyPrefab;
         speed = _speed;
         rb = playerBodyPrefab.GetComponent<Rigidbody>();
+
+        EventSystem.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
     
     private void Update()
@@ -49,11 +52,19 @@ public class PlayerMovement
 
     private void FixedUpdate()
     {
-        MoveCharacter(movement);
+        if (canMove)
+        {
+            MoveCharacter(movement);
+        }
     }
 
     private void MoveCharacter(Vector3 _direction)
     {
         rb.velocity = _direction * speed;
+    }
+
+    private void PlayerAttacked()
+    {
+        canMove = false;
     }
 }

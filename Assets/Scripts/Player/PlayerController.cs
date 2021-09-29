@@ -160,6 +160,8 @@ public class PlayerController
                 rb.useGravity = false;
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true;
+                hit.transform.GetComponent<Collider>().enabled = false;
                 hit.transform.localPosition = Vector3.zero;
                 hit.transform.localRotation = Quaternion.identity;
                 rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -227,6 +229,8 @@ public class PlayerController
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = true;
+            rb.isKinematic = false;
+            holdingObject.transform.GetComponent<Collider>().enabled = true;
             rb.constraints = RigidbodyConstraints.None;
             holdingObject.transform.SetParent(null);
             rb.AddForce(objectHolder.transform.forward * throwForce, ForceMode.Impulse);
@@ -239,6 +243,8 @@ public class PlayerController
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = true;
+            rb.isKinematic = false;
+            holdingObject.transform.GetComponent<Collider>().enabled = true;
             rb.constraints = RigidbodyConstraints.None;
             holdingObject.transform.SetParent(null);
             holdingObject = null;
