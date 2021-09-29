@@ -14,12 +14,15 @@ public class PlayerController
     private LayerMask enemyLayers;
     private RaycastHit hit;
     private Ray ray;
+    private float throwForce;
     private float maxRayDistance;
     private bool isHolding = false;
+    private bool canThrow = false;
     private bool canUseFlashlight = true;
     private float flashLightCoolDown;
     private float flashLightMaxUsage;
     private float flashLightTimeUsed;
+    private float flashLightDistance;
     private float currentRechargeTime;
 
     private GameObject holdingObject;
@@ -28,19 +31,21 @@ public class PlayerController
 
     private Dictionary<GameObject, GameObject> objectsToOpen = new Dictionary<GameObject, GameObject>();
 
-    public PlayerController(GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction)
+    public PlayerController(GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce)
     {
         objectHolder = _objectHolder;
         objectsToOpen = _objectsToOpen;
         flashLight = _flashLight;
         flashLightCoolDown = _flashLightCoolDown;
         flashLightMaxUsage = _flashLightMaxUsage;
+        flashLightDistance = _flashLightDistance;
         interactableLayers = _interactableLayers;
         pickUpLayers = _pickUpLayers;
         enemyLayers = _enemyLayers;
         cam = _cam;
         maxRayDistance = _maxRayDistance;
         textForInteraction = _textForInteraction;
+        throwForce = _throwForce;
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
     }
@@ -144,6 +149,11 @@ public class PlayerController
 
             if (IsInLayerMask(hit.transform.gameObject, pickUpLayers) && !isHolding)
             {
+                if (hit.transform.gameObject.tag == "Throwable")
+                {
+                    canThrow = true;
+                }
+
                 isHolding = true;
                 hit.transform.SetParent(objectHolder.transform);
                 Rigidbody rb = hit.transform.GetComponent<Rigidbody>();
@@ -154,24 +164,11 @@ public class PlayerController
                 hit.transform.localRotation = Quaternion.identity;
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 holdingObject = hit.transform.gameObject;
-                //hit.transform.gameObject.SetActive(false);
             }
         }
         else
         {
         }
-    }
-
-    private void DropObject()
-    {
-        isHolding = false;
-        Rigidbody rb = holdingObject.GetComponent<Rigidbody>();
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.None;
-        holdingObject.transform.SetParent(null);
-        holdingObject = null;
     }
 
     private void MouseOver()
@@ -217,6 +214,34 @@ public class PlayerController
         else
         {
             textForInteraction.text = "";
+        }
+    }
+
+    private void DropObject()
+    {
+        if (canThrow)
+        {
+            isHolding = false;
+            canThrow = false;
+            Rigidbody rb = holdingObject.GetComponent<Rigidbody>();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = true;
+            rb.constraints = RigidbodyConstraints.None;
+            holdingObject.transform.SetParent(null);
+            rb.AddForce(objectHolder.transform.forward * throwForce, ForceMode.Impulse);
+            holdingObject = null;
+        }
+        else
+        {
+            isHolding = false;
+            Rigidbody rb = holdingObject.GetComponent<Rigidbody>();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = true;
+            rb.constraints = RigidbodyConstraints.None;
+            holdingObject.transform.SetParent(null);
+            holdingObject = null;
         }
     }
 
