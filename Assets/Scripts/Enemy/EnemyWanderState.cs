@@ -16,7 +16,7 @@ public class EnemyWanderState : EnemyBaseState
     private bool waiting;
     private bool isDistracted;
     private float startTime;
-    private int currentPatrolIndex;
+    private int currentPatrolIndex = -1;
     private Vector3 distractPos;
 
     public override void EnterState(EnemyStateManager enemy)
@@ -25,7 +25,10 @@ public class EnemyWanderState : EnemyBaseState
         
         EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
         
-        currentPatrolIndex = GetNearestPatrolPoint();
+        if(currentPatrolIndex == -1)
+        {
+            currentPatrolIndex = GetNearestPatrolPoint();
+        }
         
         SetNewDestination();
 
@@ -36,6 +39,8 @@ public class EnemyWanderState : EnemyBaseState
 
     public override void UpdateState()
     {
+        CheckForDoor();
+        
         if (enemy.fov.canSeeTarget)
         {
             enemy.SwitchState(enemy.chaseState);
@@ -130,17 +135,41 @@ public class EnemyWanderState : EnemyBaseState
     private void CheckForDoor()
     {
         RaycastHit hit;
-        float raycastDistance = 1f;
+        float raycastDistance = 2f;
+        LayerMask layerMask = 1 << 9;
         
-        if (Physics.Raycast(enemy.enemyGameobject.transform.position, enemy.enemyGameobject.transform.forward, out hit, raycastDistance, layerMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(enemy.enemyGameobject.transform.position, enemy.enemyGameobject.transform.forward, out hit, raycastDistance, layerMask))
         {
             if (hit.transform.GetComponent<Animator>())
             {
-                if (AnimatorHasParameter("TriggerDoor", hit.transform.GetComponent<Animator>()) && !CheckForLock(hit.transform.gameObject))
+                Animator anim = hit.transform.GetComponent<Animator>();
+                if (AnimatorHasParameter("TriggerDoor", hit.transform.GetComponent<Animator>()))
                 {
-                    hit.transform.GetComponent<Animator>().SetTrigger("TriggerDoor");
+                    if (!anim.GetBool("TriggerDoor"))
+                    {
+                        anim.SetBool("TriggerDoor", true);
+                        enemy.SwitchState(enemy.interactState);
+                    }
                 }
             }
+        }
+    }
+    
+    private bool AnimatorHasParameter(string paramName, Animator animator)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.name == paramName)
+                return true;
+        }
+        return false;
+    }
+
+    private void CheckForFLashLight(GameObject enemyHit)
+    {
+        if (enemyHit == enemy.enemyGameobject)
+        {
+            enemy.SwitchState(enemy.stunnedState);
         }
     }
 

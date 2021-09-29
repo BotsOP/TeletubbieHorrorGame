@@ -8,6 +8,8 @@ public class EnemyStateManager
     public EnemyChaseState chaseState = new EnemyChaseState();
     public EnemyWanderState wanderState = new EnemyWanderState();
     public EnemyScareState scareState = new EnemyScareState();
+    public EnemyInteractState interactState = new EnemyInteractState();
+    public EnemyStunenedState stunnedState = new EnemyStunenedState();
     public GameObject enemyGameobject;
     public Transform[] patrolPoints;
     public FieldOfView fov;
