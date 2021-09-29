@@ -17,11 +17,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask playerRaycastLayer;
     [SerializeField] private LayerMask playerPickUpLayer;
+    [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private float maxPlayerRayDistance;
 
+    [SerializeField] private GameObject objectHolder;
     [SerializeField] private GameObject[] objectToOpen;
     [SerializeField] private GameObject[] keyToUse;
     [SerializeField] private TextMeshProUGUI textForInteraction;
+    [SerializeField] private GameObject flashLight;
+    [SerializeField] private float flashLightCoolDown;
+    [SerializeField] private float flashLightMaxUsage;
 
     Dictionary<GameObject, GameObject> objectsToOpenDict = new Dictionary<GameObject, GameObject>();
 
@@ -32,12 +37,10 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        PlayerController playerController = new PlayerController(playerBodyPrefab, Camera.main, playerRaycastLayer, playerPickUpLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction);
+        PlayerController playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction);
         PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
         PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
         PlayerHeadBob playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovementScript, bobbingSpeed, bobbingAmount);
-
-        //EventSystem.RaiseEvent(EventType.START);
     }
 
     void Update()
