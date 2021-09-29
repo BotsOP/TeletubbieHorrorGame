@@ -10,6 +10,7 @@ public class EnemyStateManager
     public EnemyScareState attackState = new EnemyScareState();
     public GameObject enemyGameobject;
     public Transform[] patrolPoints;
+    public FieldOfView fov;
 
     [HideInInspector] public NavMeshAgent agent;
     [HideInInspector] public Animator anim;
@@ -29,6 +30,8 @@ public class EnemyStateManager
 
     private void Start()
     {
+        fov = new FieldOfView(enemyGameobject);
+        
         agent = enemyGameobject.GetComponent<NavMeshAgent>();
         anim = enemyGameobject.GetComponent<Animator>();
 
@@ -41,6 +44,7 @@ public class EnemyStateManager
 
     private void Update()
     {
+        Debug.Log(fov.canSeeTarget);
         currentState.UpdateState();
     }
 

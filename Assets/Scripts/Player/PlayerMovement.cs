@@ -10,10 +10,23 @@ public class PlayerMovement
     private Vector3 movement;
     private Rigidbody rb;
 
-    public PlayerMovement(GameObject _playerBodyPrefab, float _speed)
+    public bool isGrounded;
+    private Transform groundCheck;
+
+    private LayerMask groundLayer;
+    private float groundDistance = 0.4f;
+
+    public float horizontal { get; private set; }
+    public float vertical { get; private set; }
+
+    public PlayerMovement(GameObject _playerBodyPrefab, Transform _groundCheck, float _speed, float _groundDistance, LayerMask _groundLayer)
     {
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
+
+        groundCheck = _groundCheck;
+        groundDistance = _groundDistance;
+        groundLayer = _groundLayer;
 
         playerBodyPrefab = _playerBodyPrefab;
         speed = _speed;
@@ -22,8 +35,10 @@ public class PlayerMovement
     
     private void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
+
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
 
         float origMagnitude = movement.magnitude;
         movement.y = 0.0f;
