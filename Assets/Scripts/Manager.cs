@@ -42,7 +42,7 @@ public class Manager : MonoBehaviour
     private void Start()
     {
         EnemyStateManager enemy = new EnemyStateManager(enemyBody, patrolPoints, enemySpawnPos);
-        
+
         for (int i = 0; i < objectToOpen.Length; i++)
         {
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);

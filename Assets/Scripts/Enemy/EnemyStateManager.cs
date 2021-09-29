@@ -11,6 +11,7 @@ public class EnemyStateManager
     public EnemyInteractState interactState = new EnemyInteractState();
     public EnemyStunenedState stunnedState = new EnemyStunenedState();
     public GameObject enemyGameobject;
+    public GameObject head;
     public Transform[] patrolPoints;
     public FieldOfView fov;
 
@@ -24,6 +25,7 @@ public class EnemyStateManager
     public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos)
     {
         enemyGameobject = GameObject.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
+        
         patrolPoints = _patrolPoints;
 
         EventSystem.Subscribe(EventType.START, Start);
@@ -32,6 +34,7 @@ public class EnemyStateManager
 
     private void Start()
     {
+        head = enemyGameobject.transform.Find("Creature_armature1/Base_bone/Hips_ctrl/spine_1/spine_2/spine_3/spine_5/Neck/Head/Jaw/LookTarget").gameObject;
         LayerMask targetMask = 1 << 6;
         LayerMask obstructionMask = 1 << 7;
         fov = new FieldOfView(enemyGameobject, targetMask, obstructionMask);

@@ -54,6 +54,6 @@ public class PlayerLook
     private void PlayerAttacked(Transform _enemyTransform)
     {
         canLook = false;
-        playerBodyPrefab.transform.LookAt(_enemyTransform);
+        cam.transform.LookAt(_enemyTransform);
     }
 }

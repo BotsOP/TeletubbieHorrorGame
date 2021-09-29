@@ -33,7 +33,7 @@ public class PlayerMovement
         speed = _speed;
         rb = playerBodyPrefab.GetComponent<Rigidbody>();
 
-        EventSystem.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
     
     private void Update()
@@ -63,8 +63,9 @@ public class PlayerMovement
         rb.velocity = _direction * speed;
     }
 
-    private void PlayerAttacked()
+    private void PlayerAttacked(Transform _enemyTransform)
     {
+        Debug.Log("attacked!!!!!!!!");
         canMove = false;
     }
 }

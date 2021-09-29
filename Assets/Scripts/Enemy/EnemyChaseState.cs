@@ -38,7 +38,7 @@ public class EnemyChaseState : EnemyBaseState
             startTime = Time.time;
         }
 
-        if (enemy.agent.remainingDistance < 4f && enemy.fov.canSeeTarget)
+        if (enemy.agent.remainingDistance < 3.5f && enemy.fov.canSeeTarget)
         {
             enemy.SwitchState(enemy.scareState);
         }

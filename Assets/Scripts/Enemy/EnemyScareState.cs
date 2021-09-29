@@ -13,10 +13,10 @@ public class EnemyScareState : EnemyBaseState
         
         enemy.anim.SetInteger("moving", 6);
         
-        EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.enemyGameobject.transform);
+        EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.head.transform);
     }
     public override void UpdateState()
     {
-        
+        EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.head.transform);
     }
 }
