@@ -22,6 +22,7 @@ public class PlayerController
     private float flashLightCoolDown;
     private float flashLightMaxUsage;
     private float flashLightTimeUsed;
+    private float flashLightDistance;
     private float currentRechargeTime;
 
     private GameObject holdingObject;
@@ -30,13 +31,14 @@ public class PlayerController
 
     private Dictionary<GameObject, GameObject> objectsToOpen = new Dictionary<GameObject, GameObject>();
 
-    public PlayerController(GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce)
+    public PlayerController(GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce)
     {
         objectHolder = _objectHolder;
         objectsToOpen = _objectsToOpen;
         flashLight = _flashLight;
         flashLightCoolDown = _flashLightCoolDown;
         flashLightMaxUsage = _flashLightMaxUsage;
+        flashLightDistance = _flashLightDistance;
         interactableLayers = _interactableLayers;
         pickUpLayers = _pickUpLayers;
         enemyLayers = _enemyLayers;

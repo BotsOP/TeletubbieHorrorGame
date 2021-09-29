@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject flashLight;
     [SerializeField] private float flashLightCoolDown;
     [SerializeField] private float flashLightMaxUsage;
+    [SerializeField] private float flashLightDistance = 3f;
     [SerializeField] private float throwForce = 5f;
 
     Dictionary<GameObject, GameObject> objectsToOpenDict = new Dictionary<GameObject, GameObject>();
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        PlayerController playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
+        PlayerController playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
         PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
         PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
         PlayerHeadBob playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovementScript, bobbingSpeed, bobbingAmount);
