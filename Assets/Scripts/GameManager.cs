@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject[] objectToOpen;
     [SerializeField] private GameObject[] keyToUse;
+    [SerializeField] private TextMeshProUGUI textForInteraction;
 
     Dictionary<GameObject, GameObject> objectsToOpenDict = new Dictionary<GameObject, GameObject>();
 
@@ -30,7 +32,7 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        PlayerController playerController = new PlayerController(playerBodyPrefab, Camera.main, playerRaycastLayer, playerPickUpLayer, maxPlayerRayDistance, objectsToOpenDict);
+        PlayerController playerController = new PlayerController(playerBodyPrefab, Camera.main, playerRaycastLayer, playerPickUpLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction);
         PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
         PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
         PlayerHeadBob playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovementScript, bobbingSpeed, bobbingAmount);

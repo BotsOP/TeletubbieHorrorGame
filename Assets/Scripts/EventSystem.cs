@@ -8,7 +8,8 @@ public enum EventType
     UPDATE,
     FIXED_UPDATE,
     DISTRACTION,
-    PLAYER_ATTACKED
+    PLAYER_ATTACKED,
+    FLASHLIGHT
 }
 
 public static class EventSystem
