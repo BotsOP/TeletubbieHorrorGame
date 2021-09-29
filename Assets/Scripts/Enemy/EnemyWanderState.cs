@@ -108,7 +108,7 @@ public class EnemyWanderState : EnemyBaseState
 
     private void SmoothRotation()
     {
-        float rotationSpeed = 15;
+        float rotationSpeed = 80;
         Vector3 newAngle;
         newAngle.x = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.x, enemy.patrolPoints[currentPatrolIndex].eulerAngles.x, (Time.time - startTime) / rotationSpeed);
         newAngle.y = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.y, enemy.patrolPoints[currentPatrolIndex].eulerAngles.y, (Time.time - startTime) / rotationSpeed);
