@@ -5,7 +5,7 @@ using UnityEngine;
 public class FieldOfView
 {
     private const float RADIUS = 100f;
-    private const float ANGLE = 90;
+    private const float ANGLE = 180;
     
     public bool canSeeTarget;
     public Transform target;
@@ -15,13 +15,13 @@ public class FieldOfView
     private LayerMask targetMask;
     private LayerMask obstructionMask;
 
-    public FieldOfView(GameObject _gameObject)
+    public FieldOfView(GameObject _gameObject, LayerMask _targetMask, LayerMask _obstructionMask)
     {
         gameObject = _gameObject;
 
-        targetMask = 1 << 6;
-        obstructionMask = 1 << 7;
-        
+        targetMask = _targetMask;
+        obstructionMask = _obstructionMask;
+
         EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
     }
 

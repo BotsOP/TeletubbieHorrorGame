@@ -17,7 +17,7 @@ public class Stone : MonoBehaviour
 
     private IEnumerator Distraction()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         EventSystem<Vector3>.RaiseEvent(EventType.DISTRACTION, transform.position);
     }
 }

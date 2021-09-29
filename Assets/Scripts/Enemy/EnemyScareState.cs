@@ -8,6 +8,12 @@ public class EnemyScareState : EnemyBaseState
     public override void EnterState(EnemyStateManager enemy)
     {
         this.enemy = enemy;
+
+        enemy.agent.isStopped = true;
+        
+        enemy.anim.SetInteger("moving", 6);
+        
+        EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.enemyGameobject.transform);
     }
     public override void UpdateState()
     {

@@ -7,7 +7,7 @@ public class EnemyStateManager
 {
     public EnemyChaseState chaseState = new EnemyChaseState();
     public EnemyWanderState wanderState = new EnemyWanderState();
-    public EnemyScareState attackState = new EnemyScareState();
+    public EnemyScareState scareState = new EnemyScareState();
     public GameObject enemyGameobject;
     public Transform[] patrolPoints;
     public FieldOfView fov;
@@ -30,7 +30,9 @@ public class EnemyStateManager
 
     private void Start()
     {
-        fov = new FieldOfView(enemyGameobject);
+        LayerMask targetMask = 1 << 6;
+        LayerMask obstructionMask = 1 << 7;
+        fov = new FieldOfView(enemyGameobject, targetMask, obstructionMask);
         
         agent = enemyGameobject.GetComponent<NavMeshAgent>();
         anim = enemyGameobject.GetComponent<Animator>();
@@ -44,7 +46,6 @@ public class EnemyStateManager
 
     private void Update()
     {
-        Debug.Log(fov.canSeeTarget);
         currentState.UpdateState();
     }
 
