@@ -8,6 +8,8 @@ public class EnemyStateManager
     public EnemyChaseState chaseState = new EnemyChaseState();
     public EnemyWanderState wanderState = new EnemyWanderState();
     public EnemyScareState scareState = new EnemyScareState();
+    public EnemyInteractState interactState = new EnemyInteractState();
+    public EnemyStunenedState stunnedState = new EnemyStunenedState();
     public GameObject enemyGameobject;
     public Transform[] patrolPoints;
     public FieldOfView fov;
@@ -19,9 +21,9 @@ public class EnemyStateManager
     private EnemyBaseState currentState;
 
 
-    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints)
+    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos)
     {
-        enemyGameobject = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        enemyGameobject = GameObject.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
         patrolPoints = _patrolPoints;
 
         EventSystem.Subscribe(EventType.START, Start);

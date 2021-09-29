@@ -5,7 +5,7 @@ using UnityEngine;
 public class FieldOfView
 {
     private const float RADIUS = 100f;
-    private const float ANGLE = 180;
+    private const float ANGLE = 130;
     
     public bool canSeeTarget;
     public Transform target;
@@ -29,7 +29,6 @@ public class FieldOfView
     {
         if(frameCount % 20 == 0)
         {
-            Debug.Log("Yo");
             FieldofViewCheck();
         }
         frameCount++;

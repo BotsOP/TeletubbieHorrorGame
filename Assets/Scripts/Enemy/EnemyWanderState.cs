@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemyWanderState : EnemyBaseState
@@ -15,7 +16,7 @@ public class EnemyWanderState : EnemyBaseState
     private bool waiting;
     private bool isDistracted;
     private float startTime;
-    private int currentPatrolIndex;
+    private int currentPatrolIndex = -1;
     private Vector3 distractPos;
 
     public override void EnterState(EnemyStateManager enemy)
@@ -23,6 +24,11 @@ public class EnemyWanderState : EnemyBaseState
         this.enemy = enemy;
         
         EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
+        
+        if(currentPatrolIndex == -1)
+        {
+            currentPatrolIndex = GetNearestPatrolPoint();
+        }
         
         SetNewDestination();
 
@@ -33,6 +39,8 @@ public class EnemyWanderState : EnemyBaseState
 
     public override void UpdateState()
     {
+        CheckForDoor();
+        
         if (enemy.fov.canSeeTarget)
         {
             enemy.SwitchState(enemy.chaseState);
@@ -106,9 +114,68 @@ public class EnemyWanderState : EnemyBaseState
         }
     }
 
+    private int GetNearestPatrolPoint()
+    {
+        float[] smallestDistance = new float[enemy.patrolPoints.Length];
+        int closestPatrolPoint = 0;
+        for (int i = 0; i < enemy.patrolPoints.Length; i++)
+        {
+            smallestDistance[i] = Vector3.Distance(enemy.patrolPoints[i].position, enemy.enemyGameobject.transform.position);
+        }
+        for (int i = 0; i < enemy.patrolPoints.Length; i++)
+        {
+            if (Vector3.Distance(enemy.patrolPoints[i].position, enemy.enemyGameobject.transform.position) <= smallestDistance.Min())
+            {
+                closestPatrolPoint = i;
+            }
+        }
+        return closestPatrolPoint;
+    }
+
+    private void CheckForDoor()
+    {
+        RaycastHit hit;
+        float raycastDistance = 2f;
+        LayerMask layerMask = 1 << 9;
+        
+        if (Physics.Raycast(enemy.enemyGameobject.transform.position, enemy.enemyGameobject.transform.forward, out hit, raycastDistance, layerMask))
+        {
+            if (hit.transform.GetComponent<Animator>())
+            {
+                Animator anim = hit.transform.GetComponent<Animator>();
+                if (AnimatorHasParameter("TriggerDoor", hit.transform.GetComponent<Animator>()))
+                {
+                    if (!anim.GetBool("TriggerDoor"))
+                    {
+                        anim.SetBool("TriggerDoor", true);
+                        enemy.SwitchState(enemy.interactState);
+                    }
+                }
+            }
+        }
+    }
+    
+    private bool AnimatorHasParameter(string paramName, Animator animator)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.name == paramName)
+                return true;
+        }
+        return false;
+    }
+
+    private void CheckForFLashLight(GameObject enemyHit)
+    {
+        if (enemyHit == enemy.enemyGameobject)
+        {
+            enemy.SwitchState(enemy.stunnedState);
+        }
+    }
+
     private void SmoothRotation()
     {
-        float rotationSpeed = 80;
+        float rotationSpeed = 30;
         Vector3 newAngle;
         newAngle.x = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.x, enemy.patrolPoints[currentPatrolIndex].eulerAngles.x, (Time.time - startTime) / rotationSpeed);
         newAngle.y = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.y, enemy.patrolPoints[currentPatrolIndex].eulerAngles.y, (Time.time - startTime) / rotationSpeed);
