@@ -17,6 +17,6 @@ public class EnemyScareState : EnemyBaseState
     }
     public override void UpdateState()
     {
-
+        
     }
 }
