@@ -8,6 +8,7 @@ public class EnemyWanderState : EnemyBaseState
     private const float SWITCH_PROBABILITY = 0.1f;
     private const bool WAIT_AT_POINTS = true;
     private const float PATROL_WAITING_TIME = 5f;
+    private const float DISTRACT_RANGE = 50f;
 
     EnemyStateManager enemy;
 
@@ -16,6 +17,7 @@ public class EnemyWanderState : EnemyBaseState
     private bool waiting;
     private bool isDistracted;
     private float startTime;
+    private float startTimeDistract;
     private int currentPatrolIndex = -1;
     private Vector3 distractPos;
 
@@ -24,6 +26,7 @@ public class EnemyWanderState : EnemyBaseState
         this.enemy = enemy;
         
         EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
+        EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
         
         if(currentPatrolIndex == -1)
         {
@@ -46,16 +49,20 @@ public class EnemyWanderState : EnemyBaseState
             enemy.SwitchState(enemy.chaseState);
         }
         
-        if (isDistracted && Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < 80)
+        if (isDistracted && Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < DISTRACT_RANGE)
         {
+            startTimeDistract = Time.time;
             enemy.agent.SetDestination(distractPos);
-            isDistracted = false;
+            walking = true;
         }
         
-        if (enemy.agent.remainingDistance < 0.01f)
+        Debug.Log(enemy.agent.remainingDistance);
+        if (enemy.agent.remainingDistance < 0.01f && Time.time - startTimeDistract > 1f)
         {
+            isDistracted = false;
             if (walking)
             {
+                Debug.Log("set time");
                 walking = false;
                 
 
@@ -71,12 +78,12 @@ public class EnemyWanderState : EnemyBaseState
                     SetNewDestination();
                 }
             }
-
             SmoothRotation();
         }
 
-        if (waiting && Time.time - startTime > PATROL_WAITING_TIME)
+        if (waiting && Time.time - startTime > PATROL_WAITING_TIME && !isDistracted)
         {
+            Debug.Log("done waiting");
             waiting = false;
 
             ChangePatrolPoint();
@@ -167,7 +174,7 @@ public class EnemyWanderState : EnemyBaseState
 
     private void CheckForFLashLight(GameObject enemyHit)
     {
-        if (enemyHit == enemy.enemyGameobject)
+        if (enemyHit == enemy.head)
         {
             enemy.SwitchState(enemy.stunnedState);
         }

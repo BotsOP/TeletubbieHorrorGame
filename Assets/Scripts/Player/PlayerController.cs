@@ -134,6 +134,7 @@ public class PlayerController
                 if (AnimatorHasParameter("TriggerDoor", animator) && !CheckForLock(hit.transform.gameObject))
                 {
                     hit.transform.GetComponent<Animator>().SetBool("TriggerDoor", !animator.GetBool("TriggerDoor"));
+                    EventSystem<Vector3>.RaiseEvent(EventType.DISTRACTION, hit.transform.position);
                 }
                 else if (AnimatorHasParameter("TriggerDoor", animator) && CheckForLock(hit.transform.gameObject))
                 {

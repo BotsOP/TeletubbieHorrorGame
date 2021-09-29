@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyChaseState : EnemyBaseState
 {
     private const float ATTENTION_TIME = 15f;
+    private const float RANGE_TILL_ATTACK = 4f;
     
     EnemyStateManager enemy;
     private float lastSeen;
@@ -12,6 +13,8 @@ public class EnemyChaseState : EnemyBaseState
     public override void EnterState(EnemyStateManager enemy)
     {
         this.enemy = enemy;
+        
+        EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
 
         lastSeen = Time.time;
 
@@ -37,8 +40,10 @@ public class EnemyChaseState : EnemyBaseState
             enemy.anim.SetInteger("moving", 2);
             startTime = Time.time;
         }
-
-        if (enemy.agent.remainingDistance < 3.5f && enemy.fov.canSeeTarget)
+        
+        Debug.Log(enemy.fov.target.position);
+        //Switch to vector3.distance
+        if (Vector3.Distance(enemy.fov.target.position, enemy.enemyGameobject.transform.position) < RANGE_TILL_ATTACK && enemy.fov.canSeeTarget)
         {
             enemy.SwitchState(enemy.scareState);
         }
@@ -49,6 +54,14 @@ public class EnemyChaseState : EnemyBaseState
         }
         
         
+    }
+    
+    private void CheckForFLashLight(GameObject enemyHit)
+    {
+        if (enemyHit == enemy.head)
+        {
+            enemy.SwitchState(enemy.stunnedState);
+        }
     }
     
     private void SmoothRotation()
