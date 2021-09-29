@@ -75,7 +75,6 @@ public class PlayerMovement
 
     private void PlayerAttacked(Transform _enemyTransform)
     {
-        Debug.Log("attacked!!!!!!!!");
         canMove = false;
     }
 

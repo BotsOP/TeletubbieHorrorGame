@@ -56,7 +56,7 @@ public class EnemyWanderState : EnemyBaseState
             walking = true;
         }
         
-        Debug.Log(enemy.agent.remainingDistance);
+        //Debug.Log(enemy.agent.remainingDistance);
         if (enemy.agent.remainingDistance < 0.01f && Time.time - startTimeDistract > 1f)
         {
             isDistracted = false;
