@@ -18,7 +18,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private PlayerLook playerMovement;
     [SerializeField] private PlayerHeadBob playerHeadBob;
     [SerializeField] private PlayerController playerController;
-    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerSpeed, groundDistance = 0.4f;
+    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerSpeed, groundDistance = 0.4f, distanceToTravelPerStep = 1f;
     [SerializeField] private float bobbingSpeed = 16f, bobbingAmount = 0.05f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
@@ -26,6 +26,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private LayerMask playerPickUpLayer;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private float maxPlayerRayDistance;
+    [SerializeField] private AudioClip[] footStepSounds;
 
     [SerializeField] private GameObject objectHolder;
     [SerializeField] private GameObject[] objectToOpen;
@@ -50,7 +51,7 @@ public class Manager : MonoBehaviour
 
         PlayerController playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
         PlayerLook playerLookScript = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
-        PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer);
+        PlayerMovement playerMovementScript = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
         PlayerHeadBob playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovementScript, bobbingSpeed, bobbingAmount);
         
         EventSystem.RaiseEvent(EventType.START);
