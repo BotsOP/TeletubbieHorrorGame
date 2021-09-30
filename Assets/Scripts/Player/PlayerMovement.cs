@@ -6,7 +6,8 @@ public class PlayerMovement
 {
     private GameObject playerBodyPrefab;
 
-    private float speed;
+    private float walkSpeed;
+    private float sneakSpeed;
     private Vector3 movement;
     private Rigidbody rb;
 
@@ -22,10 +23,15 @@ public class PlayerMovement
     private AudioSource playerAudioSource;
     private AudioClip[] footStepSounds;
 
+    private float sneakLoudness = 2f;
+    private float walkLoudness = 5f;
+
+    private bool isSneaking = false;
+
     public float horizontal { get; private set; }
     public float vertical { get; private set; }
 
-    public PlayerMovement(GameObject _playerBodyPrefab, Transform _groundCheck, float _speed, float _groundDistance, LayerMask _groundLayer, float _distanceToTravelPerStep, AudioClip[] _footStepSounds)
+    public PlayerMovement(GameObject _playerBodyPrefab, Transform _groundCheck, float _walkSpeed, float _sneakSpeed, float _groundDistance, LayerMask _groundLayer, float _distanceToTravelPerStep, AudioClip[] _footStepSounds)
     {
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
@@ -35,7 +41,8 @@ public class PlayerMovement
         groundLayer = _groundLayer;
 
         playerBodyPrefab = _playerBodyPrefab;
-        speed = _speed;
+        walkSpeed = _walkSpeed;
+        sneakSpeed = _sneakSpeed;
         rb = playerBodyPrefab.GetComponent<Rigidbody>();
         playerAudioSource = playerBodyPrefab.GetComponent<AudioSource>();
         footStepSounds = _footStepSounds;
@@ -46,6 +53,8 @@ public class PlayerMovement
     
     private void Update()
     {
+        CheckSneaking();
+
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
         horizontal = Input.GetAxis("Horizontal");
@@ -70,7 +79,14 @@ public class PlayerMovement
 
     private void MoveCharacter(Vector3 _direction)
     {
-        rb.velocity = _direction * speed;
+        if (!isSneaking)
+        {
+            rb.velocity = _direction * walkSpeed;
+        }
+        else
+        {
+            rb.velocity = _direction * sneakSpeed;
+        }
     }
 
     private void PlayerAttacked(Transform _enemyTransform)
@@ -86,13 +102,34 @@ public class PlayerMovement
 
             if (distanceTravelled >= distanceToTravelPerStep)
             {
-                // Play Step Sound
+                if (isSneaking)
+                {
+                    playerAudioSource.volume = Random.Range(0.1f, 0.15f);
+                    EventSystem<Vector3, float>.RaiseEvent(EventType.DISTRACTION, playerBodyPrefab.transform.position, sneakLoudness);
+                }
+                else if (!isSneaking)
+                {
+                    playerAudioSource.volume = Random.Range(0.25f, 0.35f);
+                    EventSystem<Vector3, float>.RaiseEvent(EventType.DISTRACTION, playerBodyPrefab.transform.position, walkLoudness);
+                }
+
                 playerAudioSource.clip = footStepSounds[Random.Range(0, footStepSounds.Length)];
-                playerAudioSource.volume = Random.Range(0.25f, 0.35f);
                 playerAudioSource.pitch = Random.Range(0.8f, 1.1f);
                 playerAudioSource.Play();
                 distanceTravelled = 0;
             }
+        }
+    }
+
+    private void CheckSneaking()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && !isSneaking)
+        {
+            isSneaking = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) && isSneaking)
+        {
+            isSneaking = false;
         }
     }
 }

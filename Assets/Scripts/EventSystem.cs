@@ -9,7 +9,8 @@ public enum EventType
     FIXED_UPDATE,
     DISTRACTION,
     PLAYER_ATTACKED,
-    FLASHLIGHT
+    FLASHLIGHT,
+    PLAYER_SNEAKING
 }
 
 public static class EventSystem
@@ -65,5 +66,33 @@ public static class EventSystem<T>
     public static void RaiseEvent(EventType evt, T arg)
     {
         eventRegister[evt]?.Invoke(arg);
+    }
+}
+
+public static class EventSystem<A, T>
+{
+    private static Dictionary<EventType, System.Action<A, T>> eventRegister = new Dictionary<EventType, System.Action<A, T>>();
+
+    public static void Subscribe(EventType evt, System.Action<A, T> func)
+    {
+        if (!eventRegister.ContainsKey(evt))
+        {
+            eventRegister.Add(evt, null);
+        }
+
+        eventRegister[evt] += func;
+    }
+
+    public static void Unsubscribe(EventType evt, System.Action<A, T> func)
+    {
+        if (eventRegister.ContainsKey(evt))
+        {
+            eventRegister[evt] -= func;
+        }
+    }
+
+    public static void RaiseEvent(EventType evt, A arg,  T arg2)
+    {
+        eventRegister[evt]?.Invoke(arg, arg2);
     }
 }

@@ -5,6 +5,7 @@ using TMPro;
 
 public class PlayerController
 {
+    private GameObject playerBodyPrefab;
     private GameObject objectHolder;
 
     private Camera cam;
@@ -28,11 +29,14 @@ public class PlayerController
     private GameObject holdingObject;
     private TextMeshProUGUI textForInteraction;
     private GameObject flashLight;
+    private AudioClip openDoorSound;
+    private AudioSource playerAudioSource;
 
     private Dictionary<GameObject, GameObject> objectsToOpen = new Dictionary<GameObject, GameObject>();
 
-    public PlayerController(GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce)
+    public PlayerController(GameObject _playerBodyPrefab, GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce, AudioClip _openDoorSound)
     {
+        playerBodyPrefab = _playerBodyPrefab;
         objectHolder = _objectHolder;
         objectsToOpen = _objectsToOpen;
         flashLight = _flashLight;
@@ -46,6 +50,8 @@ public class PlayerController
         maxRayDistance = _maxRayDistance;
         textForInteraction = _textForInteraction;
         throwForce = _throwForce;
+        openDoorSound = _openDoorSound;
+        playerAudioSource = playerBodyPrefab.GetComponent<AudioSource>();
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
     }
@@ -116,7 +122,7 @@ public class PlayerController
     {
         if (flashLight.activeSelf)
         {
-            if (Physics.Raycast(ray, out hit, maxRayDistance, enemyLayers, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(ray, out hit, flashLightDistance, enemyLayers, QueryTriggerInteraction.Ignore))
             {
                 EventSystem<GameObject>.RaiseEvent(EventType.FLASHLIGHT, hit.transform.gameObject);
             }
@@ -135,6 +141,7 @@ public class PlayerController
                 {
                     hit.transform.GetComponent<Animator>().SetBool("TriggerDoor", !animator.GetBool("TriggerDoor"));
                     EventSystem<Vector3>.RaiseEvent(EventType.DISTRACTION, hit.transform.position);
+                    playerAudioSource.PlayOneShot(openDoorSound);
                 }
                 else if (AnimatorHasParameter("TriggerDoor", animator) && CheckForLock(hit.transform.gameObject))
                 {
@@ -143,7 +150,6 @@ public class PlayerController
                         objectsToOpen.Remove(hit.transform.gameObject);
                         Object.Destroy(holdingObject);
                         holdingObject = null;
-                        //hit.transform.GetComponent<Animator>().SetTrigger("TriggerDoor");
                     }
                 }
             }
