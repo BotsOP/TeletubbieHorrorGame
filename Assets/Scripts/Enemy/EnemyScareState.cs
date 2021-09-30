@@ -11,6 +11,8 @@ public class EnemyScareState : EnemyBaseState
 
         enemy.agent.isStopped = true;
         
+        Debug.Log("attacking");
+        
         enemy.anim.SetInteger("moving", 6);
         
         EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.head.transform);

@@ -54,8 +54,8 @@ public class EnemyWanderState : EnemyBaseState
             enemy.SwitchState(enemy.chaseState);
         }
         
-        if(frameCount % 30 == 0)
-            Debug.Log(enemy.agent.remainingDistance);
+        // if(frameCount % 30 == 0)
+        //     Debug.Log(enemy.agent.remainingDistance);
         
         if (enemy.agent.remainingDistance < 0.01f)
         {
@@ -79,12 +79,11 @@ public class EnemyWanderState : EnemyBaseState
             SmoothRotation();
         }
         
-        if(frameCount % 30 == 0)
-            Debug.Log(waiting + "    " + Time.time + "    " + startTime);
+        // if(frameCount % 30 == 0)
+        //     Debug.Log(waiting + "    " + Time.time + "    " + startTime);
         
         if (waiting && Time.time - startTime > PATROL_WAITING_TIME)
         {
-            Debug.Log("done waiting");
             waiting = false;
             isDistracted = false;
             
@@ -198,9 +197,11 @@ public class EnemyWanderState : EnemyBaseState
 
     private void Distraction(Vector3 _distractPos, float hearingRange)
     {
+        Debug.Log("distraction possible");
         distractPos = _distractPos;
         if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < hearingRange)
         {
+            Debug.Log("distracted");
             startTimeDistract = Time.time;
             enemy.agent.SetDestination(distractPos);
             enemy.anim.SetInteger("moving", 1);
