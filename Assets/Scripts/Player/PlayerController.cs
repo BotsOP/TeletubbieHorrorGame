@@ -15,11 +15,13 @@ public class PlayerController
     private LayerMask enemyLayers;
     private RaycastHit hit;
     private Ray ray;
+    private float doorLoudness = 7f;
     private float throwForce;
     private float maxRayDistance;
     private bool isHolding = false;
     private bool canThrow = false;
     private bool canUseFlashlight = true;
+    private bool isDead = false;
     private float flashLightCoolDown;
     private float flashLightMaxUsage;
     private float flashLightTimeUsed;
@@ -52,36 +54,41 @@ public class PlayerController
         throwForce = _throwForce;
         openDoorSound = _openDoorSound;
         playerAudioSource = playerBodyPrefab.GetComponent<AudioSource>();
+        isDead = false;
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     private void Update()
     {
-        ray = cam.ScreenPointToRay(Input.mousePosition);
-
-        MouseOver();
-
-        CheckForEnemyStun();
-
-        FlashLightLogic();
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (!isDead)
         {
-            MouseClick();
-        }
+            ray = cam.ScreenPointToRay(Input.mousePosition);
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            if (isHolding)
+            MouseOver();
+
+            CheckForEnemyStun();
+
+            FlashLightLogic();
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                DropObject();
+                MouseClick();
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            ToggleFlashLight();
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (isHolding)
+                {
+                    DropObject();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                ToggleFlashLight();
+            }
         }
     }
 
@@ -140,8 +147,9 @@ public class PlayerController
                 if (AnimatorHasParameter("TriggerDoor", animator) && !CheckForLock(hit.transform.gameObject))
                 {
                     hit.transform.GetComponent<Animator>().SetBool("TriggerDoor", !animator.GetBool("TriggerDoor"));
-                    EventSystem<Vector3>.RaiseEvent(EventType.DISTRACTION, hit.transform.position);
-                    playerAudioSource.PlayOneShot(openDoorSound);
+                    EventSystem<Vector3, float>.RaiseEvent(EventType.DISTRACTION, hit.transform.position, doorLoudness);
+                    playerAudioSource.clip = openDoorSound;
+                    playerAudioSource.Play();
                 }
                 else if (AnimatorHasParameter("TriggerDoor", animator) && CheckForLock(hit.transform.gameObject))
                 {
@@ -281,5 +289,11 @@ public class PlayerController
     public bool IsInLayerMask(GameObject _obj, LayerMask _layerMask)
     {
         return ((_layerMask.value & (1 << _obj.layer)) > 0);
+    }
+
+    private void PlayerAttacked(Transform _transform)
+    {
+        isDead = true;
+        flashLight.SetActive(false);
     }
 }

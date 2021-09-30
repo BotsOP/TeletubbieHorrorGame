@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
         playerLook = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
         playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerWalkSpeed, playerSneakSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
         playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
+
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     void Update()
@@ -58,5 +60,10 @@ public class GameManager : MonoBehaviour
     void FixedUpdate()
     {
         EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
+    }
+
+    void PlayerAttacked(Transform _transform)
+    {
+        Destroy(playerBodyPrefab.GetComponent<Rigidbody>());
     }
 }

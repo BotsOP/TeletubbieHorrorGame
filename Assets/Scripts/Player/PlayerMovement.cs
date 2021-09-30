@@ -53,20 +53,23 @@ public class PlayerMovement
     
     private void Update()
     {
-        CheckSneaking();
+        if (canMove)
+        {
+            CheckSneaking();
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
+            horizontal = Input.GetAxis("Horizontal");
+            vertical = Input.GetAxis("Vertical");
 
-        CheckFootsteps();
+            CheckFootsteps();
 
-        float origMagnitude = movement.magnitude;
-        movement.y = 0.0f;
-        movement = movement.normalized * origMagnitude;
+            float origMagnitude = movement.magnitude;
+            movement.y = 0.0f;
+            movement = movement.normalized * origMagnitude;
 
-        movement = playerBodyPrefab.transform.right * horizontal + playerBodyPrefab.transform.forward * vertical;
+            movement = playerBodyPrefab.transform.right * horizontal + playerBodyPrefab.transform.forward * vertical;
+        }
     }
 
     private void FixedUpdate()

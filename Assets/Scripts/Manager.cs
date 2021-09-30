@@ -60,6 +60,7 @@ public class Manager : MonoBehaviour
         playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
         
         EventSystem.RaiseEvent(EventType.START);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     private void Update()
@@ -70,5 +71,10 @@ public class Manager : MonoBehaviour
     private void FixedUpdate()
     {
         EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
+    }
+
+    void PlayerAttacked(Transform _transform)
+    {
+        Destroy(playerBodyPrefab.GetComponent<Rigidbody>());
     }
 }
