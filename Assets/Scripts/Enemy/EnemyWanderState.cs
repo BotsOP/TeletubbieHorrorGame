@@ -20,6 +20,8 @@ public class EnemyWanderState : EnemyBaseState
     private float startTimeDistract;
     private int currentPatrolIndex = -1;
     private Vector3 distractPos;
+    
+    private int frameCount;
 
     public override void EnterState(EnemyStateManager enemy)
     {
@@ -32,8 +34,11 @@ public class EnemyWanderState : EnemyBaseState
         {
             currentPatrolIndex = GetNearestPatrolPoint();
         }
-        
-        SetNewDestination();
+
+        if (!isDistracted)
+        {
+            SetNewDestination();
+        }
 
         enemy.agent.speed = 2;
         enemy.anim.SetInteger("battle", 0);
@@ -49,22 +54,15 @@ public class EnemyWanderState : EnemyBaseState
             enemy.SwitchState(enemy.chaseState);
         }
         
-        if (isDistracted && Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < DISTRACT_RANGE)
-        {
-            startTimeDistract = Time.time;
-            enemy.agent.SetDestination(distractPos);
-            walking = true;
-        }
+        if(frameCount % 30 == 0)
+            Debug.Log(enemy.agent.remainingDistance);
         
-        //Debug.Log(enemy.agent.remainingDistance);
-        if (enemy.agent.remainingDistance < 0.01f && Time.time - startTimeDistract > 1f)
+        if (enemy.agent.remainingDistance < 0.01f)
         {
-            isDistracted = false;
             if (walking)
             {
                 Debug.Log("set time");
                 walking = false;
-                
 
                 if (WAIT_AT_POINTS)
                 {
@@ -80,15 +78,23 @@ public class EnemyWanderState : EnemyBaseState
             }
             SmoothRotation();
         }
-
-        if (waiting && Time.time - startTime > PATROL_WAITING_TIME && !isDistracted)
+        
+        if(frameCount % 30 == 0)
+            Debug.Log(waiting + "    " + Time.time + "    " + startTime);
+        
+        if (waiting && Time.time - startTime > PATROL_WAITING_TIME)
         {
             Debug.Log("done waiting");
             waiting = false;
+            isDistracted = false;
+            
+            enemy.anim.SetInteger("moving", 1);
 
             ChangePatrolPoint();
             SetNewDestination();
         }
+
+        frameCount++;
     }
 
     private void SetNewDestination()
@@ -193,7 +199,15 @@ public class EnemyWanderState : EnemyBaseState
     private void Distraction(Vector3 _distractPos)
     {
         distractPos = _distractPos;
-        isDistracted = true;
+        if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < DISTRACT_RANGE)
+        {
+            startTimeDistract = Time.time;
+            enemy.agent.SetDestination(distractPos);
+            enemy.anim.SetInteger("moving", 1);
+            walking = true;
+            waiting = false;
+            isDistracted = true;
+        }
     }
 }
 
