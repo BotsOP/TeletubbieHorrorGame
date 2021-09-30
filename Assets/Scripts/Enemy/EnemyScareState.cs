@@ -17,6 +17,8 @@ public class EnemyScareState : EnemyBaseState
     }
     public override void UpdateState()
     {
+        Vector3 lookAt = new Vector3(enemy.fov.target.position.x, enemy.enemyGameobject.transform.position.y, enemy.fov.target.position.z);
+        enemy.enemyGameobject.transform.LookAt(lookAt);
         EventSystem<Transform>.RaiseEvent(EventType.PLAYER_ATTACKED, enemy.head.transform);
     }
 }

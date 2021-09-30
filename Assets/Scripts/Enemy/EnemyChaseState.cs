@@ -26,23 +26,18 @@ public class EnemyChaseState : EnemyBaseState
     {
         if (enemy.fov.canSeeTarget)
         {
-            lastSeen = Time.time;
-            enemy.agent.SetDestination(enemy.fov.target.position);
+            UpdateTargetPos();
         }
 
         if (enemy.agent.remainingDistance < 0.2f)
         {
-            enemy.anim.SetInteger("moving", 0);
-            SmoothRotation();
+            LookAround();
         }
         else
         {
-            enemy.anim.SetInteger("moving", 2);
-            startTime = Time.time;
+            KeepMoving();
         }
         
-        Debug.Log(enemy.fov.target.position);
-        //Switch to vector3.distance
         if (Vector3.Distance(enemy.fov.target.position, enemy.enemyGameobject.transform.position) < RANGE_TILL_ATTACK && enemy.fov.canSeeTarget)
         {
             enemy.SwitchState(enemy.scareState);
@@ -54,6 +49,24 @@ public class EnemyChaseState : EnemyBaseState
         }
         
         
+    }
+
+    private void UpdateTargetPos()
+    {
+        lastSeen = Time.time;
+        enemy.agent.SetDestination(enemy.fov.target.position);
+    }
+
+    private void LookAround()
+    {
+        enemy.anim.SetInteger("moving", 0);
+        SmoothRotation();
+    }
+
+    private void KeepMoving()
+    {
+        enemy.anim.SetInteger("moving", 2);
+        startTime = Time.time;
     }
     
     private void CheckForFLashLight(GameObject enemyHit)
