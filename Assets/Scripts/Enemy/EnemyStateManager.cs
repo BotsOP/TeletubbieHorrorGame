@@ -14,6 +14,8 @@ public class EnemyStateManager
     public GameObject head;
     public Transform[] patrolPoints;
     public FieldOfView fov;
+    public AudioSource enemyAudioSource;
+    public AudioClip enemyRoarSound;
 
     [HideInInspector] public NavMeshAgent agent;
     [HideInInspector] public Animator anim;
@@ -22,9 +24,11 @@ public class EnemyStateManager
     private EnemyBaseState currentState;
 
 
-    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos)
+    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos, AudioClip _enemyRoarSound)
     {
-        enemyGameobject = GameObject.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
+        enemyGameobject = Object.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
+        enemyAudioSource = enemyGameobject.GetComponent<AudioSource>();
+        enemyRoarSound = _enemyRoarSound;
         
         patrolPoints = _patrolPoints;
 

@@ -11,8 +11,10 @@ public class EnemyStunenedState : EnemyBaseState
     public override void EnterState(EnemyStateManager _enemy)
     {
         enemy = _enemy;
-        
-        Debug.Log("stunned");
+
+        Debug.Log("Play Sound");
+        enemy.enemyAudioSource.clip = enemy.enemyRoarSound;
+        enemy.enemyAudioSource.Play();
         startTime = Time.time;
         enemy.agent.isStopped = true;
         enemy.anim.SetInteger("moving", 5);
