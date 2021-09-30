@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     private PlayerHeadBob playerHeadBob;
 
     [SerializeField] private GameObject playerBodyPrefab;
-    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerSpeed, groundDistance = 0.4f, distanceToTravelPerStep = 1f;
+    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerWalkSpeed, playerSneakSpeed, groundDistance = 0.4f, distanceToTravelPerStep = 1f;
     [SerializeField] private float bobbingSpeed = 16f, bobbingAmount = 0.05f;
     [Space(15)]
     [SerializeField] private Transform groundCheck;
@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textForInteraction;
     [SerializeField] private GameObject[] objectToOpen;
     [SerializeField] private GameObject[] keyToUse;
+    [SerializeField] private AudioClip openDoorSound;
     [Space(15)]
     [SerializeField] private GameObject flashLight;
     [SerializeField] private float flashLightCoolDown;
@@ -43,9 +44,9 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        playerController = new PlayerController(objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce);
+        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
         playerLook = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
-        playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
+        playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerWalkSpeed, playerSneakSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
         playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
     }
 
@@ -58,5 +59,4 @@ public class GameManager : MonoBehaviour
     {
         EventSystem.RaiseEvent(EventType.FIXED_UPDATE);
     }
-   
 }
