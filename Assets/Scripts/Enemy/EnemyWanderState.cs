@@ -27,7 +27,7 @@ public class EnemyWanderState : EnemyBaseState
     {
         this.enemy = enemy;
         
-        EventSystem<Vector3>.Subscribe(EventType.DISTRACTION, Distraction);
+        EventSystem<Vector3, float>.Subscribe(EventType.DISTRACTION, Distraction);
         EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
         
         if(currentPatrolIndex == -1)
@@ -196,10 +196,10 @@ public class EnemyWanderState : EnemyBaseState
         enemy.enemyGameobject.transform.eulerAngles = newAngle;
     }
 
-    private void Distraction(Vector3 _distractPos)
+    private void Distraction(Vector3 _distractPos, float hearingRange)
     {
         distractPos = _distractPos;
-        if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < DISTRACT_RANGE)
+        if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < hearingRange)
         {
             startTimeDistract = Time.time;
             enemy.agent.SetDestination(distractPos);
