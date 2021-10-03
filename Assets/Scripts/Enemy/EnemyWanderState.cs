@@ -23,9 +23,9 @@ public class EnemyWanderState : EnemyBaseState
     
     private int frameCount;
 
-    public override void EnterState(EnemyStateManager enemy)
+    public override void EnterState(EnemyStateManager _enemy)
     {
-        this.enemy = enemy;
+        enemy = _enemy;
         
         EventSystem<Vector3, float>.Subscribe(EventType.DISTRACTION, Distraction);
         EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
@@ -79,9 +79,6 @@ public class EnemyWanderState : EnemyBaseState
             }
             SmoothRotation();
         }
-        
-        // if(frameCount % 30 == 0)
-        //     Debug.Log(waiting + "    " + Time.time + "    " + startTime);
         
         if (waiting && Time.time - startTime > PATROL_WAITING_TIME)
         {
@@ -168,19 +165,19 @@ public class EnemyWanderState : EnemyBaseState
         }
     }
     
-    private bool AnimatorHasParameter(string paramName, Animator animator)
+    private bool AnimatorHasParameter(string _paramName, Animator _animator)
     {
-        foreach (AnimatorControllerParameter param in animator.parameters)
+        foreach (AnimatorControllerParameter param in _animator.parameters)
         {
-            if (param.name == paramName)
+            if (param.name == _paramName)
                 return true;
         }
         return false;
     }
 
-    private void CheckForFLashLight(GameObject enemyHit)
+    private void CheckForFLashLight(GameObject _enemyHit)
     {
-        if (enemyHit == enemy.head)
+        if (_enemyHit == enemy.head)
         {
             enemy.SwitchState(enemy.stunnedState);
         }
@@ -196,11 +193,11 @@ public class EnemyWanderState : EnemyBaseState
         enemy.enemyGameobject.transform.eulerAngles = newAngle;
     }
 
-    private void Distraction(Vector3 _distractPos, float hearingRange)
+    private void Distraction(Vector3 _distractPos, float _hearingRange)
     {
         Debug.Log("distraction possible");
         distractPos = _distractPos;
-        if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < hearingRange)
+        if (Vector3.Distance(distractPos, enemy.enemyGameobject.transform.position) < _hearingRange)
         {
             Debug.Log("distracted");
             startTimeDistract = Time.time;
@@ -212,7 +209,7 @@ public class EnemyWanderState : EnemyBaseState
         }
     }
 
-    private void PlayerAttacked(Transform transform)
+    private void PlayerAttacked(Transform _transform)
     {
         EventSystem<Vector3, float>.Unsubscribe(EventType.DISTRACTION, Distraction);
         EventSystem<GameObject>.Unsubscribe(EventType.FLASHLIGHT, CheckForFLashLight);

@@ -69,7 +69,7 @@ public class FieldOfView
         }
     }
 
-    private void PlayerAttacked(Transform transform)
+    private void PlayerAttacked(Transform _transform)
     {
         EventSystem.Unsubscribe(EventType.FIXED_UPDATE, FixedUpdate);
         EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);

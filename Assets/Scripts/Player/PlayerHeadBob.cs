@@ -55,7 +55,7 @@ public class PlayerHeadBob
         isPlayerGrounded = _isGrounded;
     }
 
-    private void PlayerAttacked(Transform transform)
+    private void PlayerAttacked(Transform _transform)
     {
         EventSystem.Unsubscribe(EventType.UPDATE, Update);
         EventSystem<bool>.Unsubscribe(EventType.PLAYER_MOVEMENT, CheckPlayerMovement);

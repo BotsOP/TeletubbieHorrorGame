@@ -5,9 +5,9 @@ using UnityEngine;
 public class EnemyScareState : EnemyBaseState
 {
     EnemyStateManager enemy;
-    public override void EnterState(EnemyStateManager enemy)
+    public override void EnterState(EnemyStateManager _enemy)
     {
-        this.enemy = enemy;
+        enemy = _enemy;
 
         enemy.agent.isStopped = true;
         

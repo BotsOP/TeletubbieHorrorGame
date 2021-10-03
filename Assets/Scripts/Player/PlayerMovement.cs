@@ -93,7 +93,7 @@ public class PlayerMovement
         }
     }
 
-    private void PlayerAttacked(Transform _enemyTransform)
+    private void PlayerAttacked(Transform _transform)
     {
         canMove = false;
         EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);

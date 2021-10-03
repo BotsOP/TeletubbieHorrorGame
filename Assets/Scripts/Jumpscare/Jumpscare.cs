@@ -8,7 +8,7 @@ public class Jumpscare
     private GameObject playerBodyPrefab;
     private Transform jumpscareTrigger;
 
-    private AudioSource scream;
+    private AudioSource screamSource;
     private AudioClip screamClip;
     private GameObject jumpscareCam;
     private GameObject flashingImage;
@@ -18,7 +18,7 @@ public class Jumpscare
     private float jumpscareTime;
     private bool isTriggered = false;
 
-    public Jumpscare(GameObject _playerBodyPrefab, Transform _jumpscareTrigger, GameObject _jumpscareCam, GameObject _flashingImage, AudioSource _scream, AudioClip _screamClip)
+    public Jumpscare(GameObject _playerBodyPrefab, Transform _jumpscareTrigger, GameObject _jumpscareCam, GameObject _flashingImage, AudioSource _screamSource, AudioClip _screamClip)
     {
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
@@ -27,7 +27,7 @@ public class Jumpscare
         jumpscareTrigger = _jumpscareTrigger;
         jumpscareCam = _jumpscareCam;
         flashingImage = _flashingImage;
-        scream = _scream;
+        screamSource = _screamSource;
         screamClip = _screamClip;
         mainCam = Camera.main.gameObject;
 
@@ -49,14 +49,14 @@ public class Jumpscare
             {
                 if(item.gameObject == playerBodyPrefab && !isTriggered)
                 {
-                    scream.gameObject.SetActive(true);
+                    screamSource.gameObject.SetActive(true);
                     isTriggered = true;
                     jumpscareTrigger.transform.gameObject.SetActive(false);
 
                     mainCam.SetActive(false);
                     jumpscareCam.SetActive(true);
                     flashingImage.SetActive(true);
-                    scream.PlayOneShot(screamClip, 0.3f);
+                    screamSource.PlayOneShot(screamClip, 0.3f);
                 }
             }    
         }
@@ -69,13 +69,13 @@ public class Jumpscare
                 jumpscareCam.SetActive(false);
                 flashingImage.SetActive(false);
                 mainCam.SetActive(true);
-                scream.gameObject.SetActive(false);
+                screamSource.gameObject.SetActive(false);
                 isTriggered = false;
             }
         }
     }
 
-    private void PlayerAttacked(Transform transform)
+    private void PlayerAttacked(Transform _transform)
     {
         EventSystem.Unsubscribe(EventType.UPDATE, Update);
         EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);

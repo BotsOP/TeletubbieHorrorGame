@@ -10,9 +10,9 @@ public class EnemyChaseState : EnemyBaseState
     EnemyStateManager enemy;
     private float lastSeen;
     private float startTime;
-    public override void EnterState(EnemyStateManager enemy)
+    public override void EnterState(EnemyStateManager _enemy)
     {
-        this.enemy = enemy;
+        enemy = _enemy;
         
         EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);

@@ -24,9 +24,9 @@ public class EnemyStateManager
     private EnemyBaseState currentState;
 
 
-    public EnemyStateManager(GameObject prefab, Transform[] _patrolPoints, Transform spawnPos, AudioClip _enemyRoarSound)
+    public EnemyStateManager(GameObject _prefab, Transform[] _patrolPoints, Transform _spawnPos, AudioClip _enemyRoarSound)
     {
-        enemyGameobject = Object.Instantiate(prefab, spawnPos.position, spawnPos.rotation);
+        enemyGameobject = Object.Instantiate(_prefab, _spawnPos.position, _spawnPos.rotation);
         enemyAudioSource = enemyGameobject.GetComponent<AudioSource>();
         enemyRoarSound = _enemyRoarSound;
         
@@ -60,13 +60,13 @@ public class EnemyStateManager
         currentState.UpdateState();
     }
 
-    public void SwitchState(EnemyBaseState state)
+    public void SwitchState(EnemyBaseState _state)
     {
-        currentState = state;
-        state.EnterState(this);
+        currentState = _state;
+        _state.EnterState(this);
     }
 
-    private void PlayerAttacked(Transform transform)
+    private void PlayerAttacked(Transform _transform)
     {
         EventSystem.Unsubscribe(EventType.START, Start);
         EventSystem.Unsubscribe(EventType.UPDATE, Update);

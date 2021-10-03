@@ -20,27 +20,27 @@ public static class EventSystem
 {
     private static Dictionary<EventType, System.Action> eventRegister = new Dictionary<EventType, System.Action>();
 
-    public static void Subscribe(EventType evt, System.Action func)
+    public static void Subscribe(EventType _evt, System.Action _func)
     {
-        if (!eventRegister.ContainsKey(evt))
+        if (!eventRegister.ContainsKey(_evt))
         {
-            eventRegister.Add(evt, null);
+            eventRegister.Add(_evt, null);
         }
 
-        eventRegister[evt] += func;
+        eventRegister[_evt] += _func;
     }
 
-    public static void Unsubscribe(EventType evt, System.Action func)
+    public static void Unsubscribe(EventType _evt, System.Action _func)
     {
-        if (eventRegister.ContainsKey(evt))
+        if (eventRegister.ContainsKey(_evt))
         {
-            eventRegister[evt] -= func;
+            eventRegister[_evt] -= _func;
         }
     }
 
-    public static void RaiseEvent(EventType evt)
+    public static void RaiseEvent(EventType _evt)
     {
-        eventRegister[evt]?.Invoke();
+        eventRegister[_evt]?.Invoke();
     }
 }
 
@@ -48,27 +48,27 @@ public static class EventSystem<T>
 {
     private static Dictionary<EventType, System.Action<T>> eventRegister = new Dictionary<EventType, System.Action<T>>();
 
-    public static void Subscribe(EventType evt, System.Action<T> func)
+    public static void Subscribe(EventType _evt, System.Action<T> _func)
     {
-        if (!eventRegister.ContainsKey(evt))
+        if (!eventRegister.ContainsKey(_evt))
         {
-            eventRegister.Add(evt, null);
+            eventRegister.Add(_evt, null);
         }
 
-        eventRegister[evt] += func;
+        eventRegister[_evt] += _func;
     }
 
-    public static void Unsubscribe(EventType evt, System.Action<T> func)
+    public static void Unsubscribe(EventType _evt, System.Action<T> _func)
     {
-        if (eventRegister.ContainsKey(evt))
+        if (eventRegister.ContainsKey(_evt))
         {
-            eventRegister[evt] -= func;
+            eventRegister[_evt] -= _func;
         }
     }
 
-    public static void RaiseEvent(EventType evt, T arg)
+    public static void RaiseEvent(EventType _evt, T _arg)
     {
-        eventRegister[evt]?.Invoke(arg);
+        eventRegister[_evt]?.Invoke(_arg);
     }
 }
 
@@ -76,26 +76,26 @@ public static class EventSystem<A, T>
 {
     private static Dictionary<EventType, System.Action<A, T>> eventRegister = new Dictionary<EventType, System.Action<A, T>>();
 
-    public static void Subscribe(EventType evt, System.Action<A, T> func)
+    public static void Subscribe(EventType _evt, System.Action<A, T> _func)
     {
-        if (!eventRegister.ContainsKey(evt))
+        if (!eventRegister.ContainsKey(_evt))
         {
-            eventRegister.Add(evt, null);
+            eventRegister.Add(_evt, null);
         }
 
-        eventRegister[evt] += func;
+        eventRegister[_evt] += _func;
     }
 
-    public static void Unsubscribe(EventType evt, System.Action<A, T> func)
+    public static void Unsubscribe(EventType _evt, System.Action<A, T> _func)
     {
-        if (eventRegister.ContainsKey(evt))
+        if (eventRegister.ContainsKey(_evt))
         {
-            eventRegister[evt] -= func;
+            eventRegister[_evt] -= _func;
         }
     }
 
-    public static void RaiseEvent(EventType evt, A arg,  T arg2)
+    public static void RaiseEvent(EventType _evt, A _arg,  T _arg2)
     {
-        eventRegister[evt]?.Invoke(arg, arg2);
+        eventRegister[_evt]?.Invoke(_arg, _arg2);
     }
 }
