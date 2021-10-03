@@ -14,10 +14,18 @@ public class GameManagerKubus : MonoBehaviour
     [SerializeField] private GameObject jumpscareCam;
     [SerializeField] private GameObject flashingImage;
 
+    [SerializeField] private GameObject[] jumpscareTriggers;
+
+    private List<Jumpscare> JumpscaresScripts = new List<Jumpscare>();
+
     // Start is called before the first frame update
     void Start()
     {
-        Jumpscare jumpscareScript = new Jumpscare(playerBodyPrefab, jumpscareTrigger, jumpscareCam, flashingImage, scream, screamClip);
+        for (int i = 0; i < jumpscareTriggers.Length; i++)
+        {
+            Jumpscare jumpscareScript = new Jumpscare(playerBodyPrefab, jumpscareTriggers[i].transform, jumpscareCam, flashingImage, scream, screamClip);
+            JumpscaresScripts.Add(jumpscareScript);
+        }
     }
 
     // Update is called once per frame

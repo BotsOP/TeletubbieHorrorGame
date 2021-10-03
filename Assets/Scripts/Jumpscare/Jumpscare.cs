@@ -13,10 +13,14 @@ public class Jumpscare
     private GameObject jumpscareCam;
     private GameObject flashingImage;
 
+    private GameObject mainCam;
+
+    private float jumpscareTime;
+    private bool isTriggered = false;
+
     public Jumpscare(GameObject _playerBodyPrefab, Transform _jumpscareTrigger, GameObject _jumpscareCam, GameObject _flashingImage, AudioSource _scream, AudioClip _screamClip)
     {
         EventSystem.Subscribe(EventType.UPDATE, Update);
-        EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
 
         playerBodyPrefab = _playerBodyPrefab;
         jumpscareTrigger = _jumpscareTrigger;
@@ -24,6 +28,7 @@ public class Jumpscare
         flashingImage = _flashingImage;
         scream = _scream;
         screamClip = _screamClip;
+        mainCam = Camera.main.gameObject;
 
         playerBodyPrefab.SetActive(true);
         jumpscareCam.SetActive(false);
@@ -34,24 +39,37 @@ public class Jumpscare
     private void Update()
     {
         jumpscareCam.transform.position = playerBodyPrefab.transform.position;
+        jumpscareCam.transform.rotation = playerBodyPrefab.transform.rotation;
 
-        if(playerBodyPrefab.transform.position.z > jumpscareTrigger.position.z)
+        Collider[] hitColliders = Physics.OverlapBox(jumpscareTrigger.transform.position, jumpscareTrigger.GetComponent<BoxCollider>().bounds.extents, Quaternion.identity);
+        if (hitColliders.Length != 0)
         {
-            playerBodyPrefab.SetActive(false);
-            jumpscareCam.SetActive(true);
-            flashingImage.SetActive(true);
-            scream.PlayOneShot(screamClip, 0.02f);
+            foreach (var item in hitColliders)
+            {
+                if(item.gameObject == playerBodyPrefab)
+                {
+                    isTriggered = true;
+                    jumpscareTrigger.transform.gameObject.SetActive(false);
+
+                    mainCam.SetActive(false);
+                    //playerBodyPrefab.SetActive(false);
+                    jumpscareCam.SetActive(true);
+                    flashingImage.SetActive(true);
+                    scream.PlayOneShot(screamClip, 0.1f);
+                }
+            }    
         }
-        else
+
+        if (isTriggered)
         {
-            playerBodyPrefab.SetActive(true);
-            jumpscareCam.SetActive(false);
-            flashingImage.SetActive(false);
+            jumpscareTime += Time.deltaTime;
+            if (jumpscareTime >= 2.5f)
+            {
+                jumpscareCam.SetActive(false);
+                flashingImage.SetActive(false);
+                mainCam.SetActive(true);
+                isTriggered = false;
+            }
         }
-    }
-
-    private void FixedUpdate()
-    {
-
     }
 }
