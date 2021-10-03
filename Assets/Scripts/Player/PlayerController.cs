@@ -36,7 +36,7 @@ public class PlayerController
 
     private Dictionary<GameObject, GameObject> objectsToOpen = new Dictionary<GameObject, GameObject>();
 
-    public PlayerController(GameObject _playerBodyPrefab, GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, Camera _cam, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce, AudioClip _openDoorSound)
+    public PlayerController(GameObject _playerBodyPrefab, GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce, AudioClip _openDoorSound)
     {
         playerBodyPrefab = _playerBodyPrefab;
         objectHolder = _objectHolder;
@@ -48,7 +48,7 @@ public class PlayerController
         interactableLayers = _interactableLayers;
         pickUpLayers = _pickUpLayers;
         enemyLayers = _enemyLayers;
-        cam = _cam;
+        cam = Camera.main;
         maxRayDistance = _maxRayDistance;
         textForInteraction = _textForInteraction;
         throwForce = _throwForce;
@@ -266,19 +266,21 @@ public class PlayerController
         }
     }
 
-    private bool AnimatorHasParameter(string paramName, Animator animator)
+    private bool AnimatorHasParameter(string _paramName, Animator _anim)
     {
-        foreach (AnimatorControllerParameter param in animator.parameters)
+        foreach (AnimatorControllerParameter param in _anim.parameters)
         {
-            if (param.name == paramName)
+            if (param.name == _paramName)
+            {
                 return true;
+            }
         }
         return false;
     }
 
-    private bool CheckForLock(GameObject _object)
+    private bool CheckForLock(GameObject _obj)
     {
-        if (objectsToOpen.ContainsKey(_object))
+        if (objectsToOpen.ContainsKey(_obj))
         {
             return true;
         }

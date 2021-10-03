@@ -10,7 +10,9 @@ public enum EventType
     DISTRACTION,
     PLAYER_ATTACKED,
     FLASHLIGHT,
-    PLAYER_SNEAKING
+    PLAYER_SNEAKING,
+    PLAYER_MOVEMENT,
+    PLAYER_GROUNDED
 }
 
 public static class EventSystem

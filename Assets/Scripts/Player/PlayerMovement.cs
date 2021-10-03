@@ -101,6 +101,9 @@ public class PlayerMovement
     {
         if (Mathf.Abs(horizontal) > 0.1f || Mathf.Abs(vertical) > 0.1f && isGrounded)
         {
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_MOVEMENT, true);
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_GROUNDED, true);
+
             distanceTravelled += Time.deltaTime;
 
             if (distanceTravelled >= distanceToTravelPerStep)
@@ -121,6 +124,14 @@ public class PlayerMovement
                 playerAudioSource.Play();
                 distanceTravelled = 0;
             }
+        }
+        else if (!isGrounded)
+        {
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_GROUNDED, true);
+        }
+        else if (Mathf.Abs(horizontal) < 0.1f || Mathf.Abs(vertical) < 0.1f)
+        {
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_MOVEMENT, true);
         }
     }
 
