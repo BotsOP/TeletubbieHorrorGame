@@ -34,9 +34,13 @@ public class PlayerController
     private AudioClip openDoorSound;
     private AudioSource playerAudioSource;
 
+    private GameObject[] objectsToCollect;
+    private TextMeshProUGUI[] objectsToCollectTexts;
+    private int collectedObjectsCount;
+
     private Dictionary<GameObject, GameObject> objectsToOpen = new Dictionary<GameObject, GameObject>();
 
-    public PlayerController(GameObject _playerBodyPrefab, GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce, AudioClip _openDoorSound)
+    public PlayerController(GameObject _playerBodyPrefab, GameObject _objectHolder, GameObject _flashLight, float _flashLightCoolDown, float _flashLightMaxUsage, float _flashLightDistance, LayerMask _interactableLayers, LayerMask _pickUpLayers, LayerMask _enemyLayers, float _maxRayDistance, Dictionary<GameObject, GameObject> _objectsToOpen, TextMeshProUGUI _textForInteraction, float _throwForce, AudioClip _openDoorSound, GameObject[] _objectsToCollect, TextMeshProUGUI[] _objectsToCollectTexts)
     {
         playerBodyPrefab = _playerBodyPrefab;
         objectHolder = _objectHolder;
@@ -55,9 +59,13 @@ public class PlayerController
         openDoorSound = _openDoorSound;
         playerAudioSource = playerBodyPrefab.GetComponent<AudioSource>();
         isDead = false;
+        objectsToCollect = _objectsToCollect;
+        objectsToCollectTexts = _objectsToCollectTexts;
+        collectedObjectsCount = 0;
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
     }
 
     private void Update()
@@ -164,6 +172,23 @@ public class PlayerController
 
             if (IsInLayerMask(hit.transform.gameObject, pickUpLayers) && !isHolding)
             {
+                for (int i = 0; i < objectsToCollect.Length; i++)
+                {
+                    if (hit.transform.gameObject == objectsToCollect[i])
+                    {
+                        objectsToCollectTexts[i].fontStyle = FontStyles.Strikethrough;
+                        collectedObjectsCount++;
+
+                        if (collectedObjectsCount == objectsToCollect.Length)
+                        {
+                            EventSystem.RaiseEvent(EventType.GAME_WON);
+                        }
+
+                        hit.transform.gameObject.SetActive(false);
+                        return;
+                    }
+                }
+
                 if (hit.transform.gameObject.tag == "Throwable")
                 {
                     canThrow = true;
@@ -182,9 +207,6 @@ public class PlayerController
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 holdingObject = hit.transform.gameObject;
             }
-        }
-        else
-        {
         }
     }
 
@@ -297,5 +319,15 @@ public class PlayerController
     {
         isDead = true;
         flashLight.SetActive(false);
+        EventSystem.Unsubscribe(EventType.UPDATE, Update);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
+    }
+
+    private void GameWon()
+    {
+        isDead = true;
+        flashLight.SetActive(false);
+        textForInteraction.enabled = false;
     }
 }

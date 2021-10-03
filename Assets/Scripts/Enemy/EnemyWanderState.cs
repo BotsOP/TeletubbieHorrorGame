@@ -29,6 +29,7 @@ public class EnemyWanderState : EnemyBaseState
         
         EventSystem<Vector3, float>.Subscribe(EventType.DISTRACTION, Distraction);
         EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
         
         if(currentPatrolIndex == -1)
         {
@@ -209,6 +210,13 @@ public class EnemyWanderState : EnemyBaseState
             waiting = false;
             isDistracted = true;
         }
+    }
+
+    private void PlayerAttacked(Transform transform)
+    {
+        EventSystem<Vector3, float>.Unsubscribe(EventType.DISTRACTION, Distraction);
+        EventSystem<GameObject>.Unsubscribe(EventType.FLASHLIGHT, CheckForFLashLight);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 }
 

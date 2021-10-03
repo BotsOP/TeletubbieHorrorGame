@@ -25,6 +25,7 @@ public class PlayerLook
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
     }
 
     private void Update()
@@ -52,5 +53,13 @@ public class PlayerLook
     {
         canLook = false;
         cam.transform.LookAt(_enemyTransform);
+        EventSystem.Unsubscribe(EventType.UPDATE, Update);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
+    }
+
+    void GameWon()
+    {
+        canLook = false;
     }
 }

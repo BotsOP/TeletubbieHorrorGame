@@ -23,6 +23,7 @@ public class FieldOfView
         obstructionMask = _obstructionMask;
 
         EventSystem.Subscribe(EventType.FIXED_UPDATE, FixedUpdate);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     private void FixedUpdate()
@@ -66,5 +67,11 @@ public class FieldOfView
         {
             canSeeTarget = false;
         }
+    }
+
+    private void PlayerAttacked(Transform transform)
+    {
+        EventSystem.Unsubscribe(EventType.FIXED_UPDATE, FixedUpdate);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 }

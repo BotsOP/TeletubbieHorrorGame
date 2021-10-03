@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -35,6 +36,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float flashLightMaxUsage;
     [SerializeField] private float flashLightDistance = 3f;
 
+    [SerializeField] private GameObject gameWonPanel;
+    [SerializeField] private GameObject crossHair;
+    [SerializeField] private GameObject howToUsePanel;
+
+    private GameObject[] objectsToCollect;
+    private TextMeshProUGUI[] objectsToCollectTexts;
+    private bool gameOver = false;
+
     Dictionary<GameObject, GameObject> objectsToOpenDict = new Dictionary<GameObject, GameObject>();
 
     void Start()
@@ -44,17 +53,31 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
+        gameOver = false;
+        howToUsePanel.SetActive(true);
+        gameWonPanel.SetActive(false);
+        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound, objectsToCollect, objectsToCollectTexts);
         playerLook = new PlayerLook(playerBodyPrefab, playerSensitivity, maxAnglyY);
         playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerWalkSpeed, playerSneakSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
         playerHeadBob = new PlayerHeadBob(playerBodyPrefab, bobbingSpeed, bobbingAmount);
 
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
     }
 
     void Update()
     {
         EventSystem.RaiseEvent(EventType.UPDATE);
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            howToUsePanel.SetActive(!howToUsePanel.activeSelf);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && gameOver)
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     void FixedUpdate()
@@ -64,6 +87,17 @@ public class GameManager : MonoBehaviour
 
     void PlayerAttacked(Transform _transform)
     {
+        crossHair.SetActive(false);
         Destroy(playerBodyPrefab.GetComponent<Rigidbody>());
+        gameOver = true;
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
+    }
+
+    void GameWon()
+    {
+        crossHair.SetActive(false);
+        gameWonPanel.SetActive(true);
+        gameWonPanel.GetComponent<Animator>().SetTrigger("GameWon");
     }
 }

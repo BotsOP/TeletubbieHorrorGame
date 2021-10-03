@@ -49,6 +49,7 @@ public class PlayerMovement
         distanceToTravelPerStep = _distanceToTravelPerStep;
 
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
     }
     
     private void Update()
@@ -95,6 +96,8 @@ public class PlayerMovement
     private void PlayerAttacked(Transform _enemyTransform)
     {
         canMove = false;
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
     }
 
     private void CheckFootsteps()
@@ -127,11 +130,11 @@ public class PlayerMovement
         }
         else if (!isGrounded)
         {
-            EventSystem<bool>.RaiseEvent(EventType.PLAYER_GROUNDED, true);
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_GROUNDED, false);
         }
         else if (Mathf.Abs(horizontal) < 0.1f || Mathf.Abs(vertical) < 0.1f)
         {
-            EventSystem<bool>.RaiseEvent(EventType.PLAYER_MOVEMENT, true);
+            EventSystem<bool>.RaiseEvent(EventType.PLAYER_MOVEMENT, false);
         }
     }
 
@@ -145,5 +148,11 @@ public class PlayerMovement
         {
             isSneaking = false;
         }
+    }
+
+    void GameWon()
+    {
+        canMove = false;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 }

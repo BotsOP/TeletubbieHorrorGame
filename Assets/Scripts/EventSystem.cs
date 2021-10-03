@@ -12,7 +12,8 @@ public enum EventType
     FLASHLIGHT,
     PLAYER_SNEAKING,
     PLAYER_MOVEMENT,
-    PLAYER_GROUNDED
+    PLAYER_GROUNDED,
+    GAME_WON
 }
 
 public static class EventSystem

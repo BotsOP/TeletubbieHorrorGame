@@ -34,6 +34,8 @@ public class EnemyStateManager
 
         EventSystem.Subscribe(EventType.START, Start);
         EventSystem.Subscribe(EventType.UPDATE, Update);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     private void Start()
@@ -62,5 +64,18 @@ public class EnemyStateManager
     {
         currentState = state;
         state.EnterState(this);
+    }
+
+    private void PlayerAttacked(Transform transform)
+    {
+        EventSystem.Unsubscribe(EventType.START, Start);
+        EventSystem.Unsubscribe(EventType.UPDATE, Update);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+    }
+
+    private void GameWon()
+    {
+        agent.isStopped = true;
     }
 }

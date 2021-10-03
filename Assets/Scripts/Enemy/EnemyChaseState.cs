@@ -15,6 +15,7 @@ public class EnemyChaseState : EnemyBaseState
         this.enemy = enemy;
         
         EventSystem<GameObject>.Subscribe(EventType.FLASHLIGHT, CheckForFLashLight);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
 
         lastSeen = Time.time;
 
@@ -47,8 +48,6 @@ public class EnemyChaseState : EnemyBaseState
         {
             enemy.SwitchState(enemy.wanderState);
         }
-        
-        
     }
 
     private void UpdateTargetPos()
@@ -85,5 +84,11 @@ public class EnemyChaseState : EnemyBaseState
         newAngle.y = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.y, enemy.enemyGameobject.transform.eulerAngles.y - 180, 0.001f );
         newAngle.z = Mathf.LerpAngle(enemy.enemyGameobject.transform.eulerAngles.z, enemy.enemyGameobject.transform.eulerAngles.z - 180, (Time.time - startTime) / rotationSpeed);
         enemy.enemyGameobject.transform.eulerAngles = newAngle;
+    }
+
+    private void PlayerAttacked(Transform transform)
+    {
+        EventSystem<GameObject>.Unsubscribe(EventType.FLASHLIGHT, CheckForFLashLight);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 }

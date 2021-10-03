@@ -25,6 +25,8 @@ public class PlayerHeadBob
         EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem<bool>.Subscribe(EventType.PLAYER_MOVEMENT, CheckPlayerMovement);
         EventSystem<bool>.Subscribe(EventType.PLAYER_GROUNDED, CheckPlayerGrounded);
+        EventSystem.Subscribe(EventType.GAME_WON, GameWon);
+        EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
     // Update is called once per frame
@@ -51,5 +53,22 @@ public class PlayerHeadBob
     private void CheckPlayerGrounded(bool _isGrounded)
     {
         isPlayerGrounded = _isGrounded;
+    }
+
+    private void PlayerAttacked(Transform transform)
+    {
+        EventSystem.Unsubscribe(EventType.UPDATE, Update);
+        EventSystem<bool>.Unsubscribe(EventType.PLAYER_MOVEMENT, CheckPlayerMovement);
+        EventSystem<bool>.Unsubscribe(EventType.PLAYER_GROUNDED, CheckPlayerGrounded);
+        EventSystem.Unsubscribe(EventType.GAME_WON, GameWon);
+        EventSystem<Transform>.Unsubscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
+    }
+
+    void GameWon()
+    {
+        EventSystem<bool>.Unsubscribe(EventType.PLAYER_MOVEMENT, CheckPlayerMovement);
+        EventSystem<bool>.Unsubscribe(EventType.PLAYER_GROUNDED, CheckPlayerGrounded);
+        isPlayerMoving = false;
+        isPlayerGrounded = false;
     }
 }
