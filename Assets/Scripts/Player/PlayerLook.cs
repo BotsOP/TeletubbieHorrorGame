@@ -8,25 +8,22 @@ public class PlayerLook
 
     private Camera cam;
 
-    private float mouseSensitivityX, mouseSensitivityY;
-    private float maxAngleY, minAngleY;
+    private float mouseSensitivity;
+    private float maxAngleY;
     private float angleX, angleY;
     private bool canLook = true;
 
-    public PlayerLook(GameObject _playerBodyPrefab, Camera _cam, float _sensitivity, float _minAngleY, float _maxAngleY)
+    public PlayerLook(GameObject _playerBodyPrefab, float _sensitivity, float _maxAngleY)
     {
         Cursor.lockState = CursorLockMode.Locked;
 
-        EventSystem.Subscribe(EventType.UPDATE, Update);
-
         playerBodyPrefab = _playerBodyPrefab;
-        cam = _cam;
-        mouseSensitivityX = _sensitivity;
-        mouseSensitivityY = _sensitivity;
-        minAngleY = _minAngleY;
+        cam = Camera.main;
+        mouseSensitivity = _sensitivity;
         maxAngleY = _maxAngleY;
         angleY = 0;
 
+        EventSystem.Subscribe(EventType.UPDATE, Update);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
 
@@ -43,9 +40,9 @@ public class PlayerLook
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        angleX += mouseX * Time.deltaTime * mouseSensitivityX;
-        angleY += mouseY * Time.deltaTime * mouseSensitivityY;
-        angleY = Mathf.Clamp(angleY, -minAngleY, maxAngleY);
+        angleX += mouseX * Time.deltaTime * mouseSensitivity;
+        angleY += mouseY * Time.deltaTime * mouseSensitivity;
+        angleY = Mathf.Clamp(angleY, -maxAngleY, maxAngleY);
 
         playerBodyPrefab.transform.rotation = Quaternion.Euler(0, angleX, 0);
         cam.transform.localRotation = Quaternion.Euler(-angleY, 0, 0);

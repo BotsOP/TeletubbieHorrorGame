@@ -8,30 +8,29 @@ public class PlayerHeadBob
 
     private float bobbingSpeed = 16f;
     private float bobbingAmount = 0.05f;
-    private PlayerMovement controller;
-    private bool isGrounded = true;
+    private bool isPlayerMoving = false;
+    private bool isPlayerGrounded = true;
 
     float defaultPosY = 0;
     float timer = 0;
 
-    public PlayerHeadBob(GameObject _playerBodyPrefab, PlayerMovement _controller, float _bobbingSpeed, float _bobbingAmount)
+    public PlayerHeadBob(GameObject _playerBodyPrefab, float _bobbingSpeed, float _bobbingAmount)
     {
         playerBodyPrefab = _playerBodyPrefab;
-        controller = _controller;
         bobbingSpeed = _bobbingSpeed;
         bobbingAmount = _bobbingAmount;
 
         defaultPosY = playerBodyPrefab.transform.localPosition.y;
 
         EventSystem.Subscribe(EventType.UPDATE, Update);
+        EventSystem<bool>.Subscribe(EventType.PLAYER_MOVEMENT, CheckPlayerMovement);
+        EventSystem<bool>.Subscribe(EventType.PLAYER_GROUNDED, CheckPlayerGrounded);
     }
 
     // Update is called once per frame
     private void Update()
     {
-        isGrounded = controller.isGrounded;
-
-        if (Mathf.Abs(controller.horizontal) > 0.1f || Mathf.Abs(controller.vertical) > 0.1f && isGrounded)
+        if (isPlayerMoving && isPlayerGrounded)
         {
             timer += Time.deltaTime * bobbingSpeed;
             playerBodyPrefab.transform.localPosition = new Vector3(playerBodyPrefab.transform.localPosition.x, defaultPosY + Mathf.Sin(timer) * bobbingAmount, playerBodyPrefab.transform.localPosition.z);
@@ -42,5 +41,15 @@ public class PlayerHeadBob
             timer = 0;
             playerBodyPrefab.transform.localPosition = new Vector3(playerBodyPrefab.transform.localPosition.x, Mathf.Lerp(playerBodyPrefab.transform.localPosition.y, defaultPosY, Time.deltaTime * bobbingSpeed), playerBodyPrefab.transform.localPosition.z);
         }
+    }
+
+    private void CheckPlayerMovement(bool _isMoving)
+    {
+        isPlayerMoving = _isMoving;
+    }
+
+    private void CheckPlayerGrounded(bool _isGrounded)
+    {
+        isPlayerGrounded = _isGrounded;
     }
 }

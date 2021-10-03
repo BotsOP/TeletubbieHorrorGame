@@ -44,10 +44,10 @@ public class GameManager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
-        playerLook = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
+        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
+        playerLook = new PlayerLook(playerBodyPrefab, playerSensitivity, maxAnglyY);
         playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerWalkSpeed, playerSneakSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
-        playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
+        playerHeadBob = new PlayerHeadBob(playerBodyPrefab, bobbingSpeed, bobbingAmount);
 
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }

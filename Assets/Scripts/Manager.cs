@@ -20,7 +20,7 @@ public class Manager : MonoBehaviour
     private PlayerHeadBob playerHeadBob;
 
     [SerializeField] private GameObject playerBodyPrefab;
-    [SerializeField] private float playerSensitivity, minAngleY, maxAnglyY, playerWalkSpeed, playerSneakSpeed, groundDistance = 0.4f, distanceToTravelPerStep = 1f;
+    [SerializeField] private float playerSensitivity, maxAnglyY, playerWalkSpeed, playerSneakSpeed, groundDistance = 0.4f, distanceToTravelPerStep = 1f;
     [SerializeField] private float bobbingSpeed = 16f, bobbingAmount = 0.05f;
     [Space(15)]
     [SerializeField] private Transform groundCheck;
@@ -54,11 +54,11 @@ public class Manager : MonoBehaviour
             objectsToOpenDict.Add(objectToOpen[i], keyToUse[i]);
         }
 
-        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, Camera.main, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
-        playerLook = new PlayerLook(playerBodyPrefab, Camera.main, playerSensitivity, minAngleY, maxAnglyY);
+        playerController = new PlayerController(playerBodyPrefab, objectHolder, flashLight, flashLightCoolDown, flashLightMaxUsage, flashLightDistance, playerRaycastLayer, playerPickUpLayer, enemyLayer, maxPlayerRayDistance, objectsToOpenDict, textForInteraction, throwForce, openDoorSound);
+        playerLook = new PlayerLook(playerBodyPrefab, playerSensitivity, maxAnglyY);
         playerMovement = new PlayerMovement(playerBodyPrefab, groundCheck, playerWalkSpeed, playerSneakSpeed, groundDistance, groundLayer, distanceToTravelPerStep, footStepSounds);
-        playerHeadBob = new PlayerHeadBob(playerBodyPrefab, playerMovement, bobbingSpeed, bobbingAmount);
-        
+        playerHeadBob = new PlayerHeadBob(playerBodyPrefab, bobbingSpeed, bobbingAmount);
+
         EventSystem.RaiseEvent(EventType.START);
         EventSystem<Transform>.Subscribe(EventType.PLAYER_ATTACKED, PlayerAttacked);
     }
